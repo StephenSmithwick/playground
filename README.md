@@ -23,6 +23,11 @@
 [rust-lang-book]: /rust/rust-lang-book
 [streaming-math]: /rust/streaming-math
 
+[//]: # (Javascript)
+[next-comments]: /js/next-comments
+[next-comments-client]: /js/next-comments-client
+[nextjs-dashboard]: /js/nextjs-dashboard
+[react-foundation]: /js/react-foundation
 
 # 🛝Playground 
 A super repo with a collection of projects with low thresholds to start.  If I like a project it may graduate from here.
@@ -37,13 +42,18 @@ brew bundle
 
 ## Rust
 A collection of Rust Projects
-- [pi][pi] - An experiment with qwen code generation to see how well it generates rust code.  Some work was needed to update the generated code for more recent rust: 
+- **[pi][pi]** An experiment with qwen code generation to see how well it generates rust code.  Some work was needed to update the generated code for more recent rust: 
     `(cd rust/pi/src; diff main.rs main.qwen.rs)`
-- [reagent][reagent] - An AI Agent written in Rust using a local model hosted by llamma.cpp
-- [smol-reagent][smol-reagent] - An AI Agent written in Rust using a local model hosted by llamma.cpp using smol instead of tokio
-- [rust-lang-book][rust-lang-book] - My workthrough of the code in the [Rust Programming Language Book][rust-book]
-- [streaming-math][streaming-math] - An early investigation of doing streaming io in rust
+- **[reagent][reagent]** An AI Agent written in Rust using a local model hosted by llamma.cpp
+- **[smol-reagent][smol-reagent]** An AI Agent written in Rust using a local model hosted by llamma.cpp using smol instead of tokio
+- **[rust-lang-book][rust-lang-book]** My workthrough of the code in the [Rust Programming Language Book][rust-book]
+- **[streaming-math][streaming-math]** An early investigation of doing streaming io in rust
 
+## Javascript
+- **[next-comments][next-comments]** A vercel/neon service for post comments.  Currently not secure
+- **[next-comments-client][next-comments-client]** A thin client for the above service - after experimentation - a solid implementation was created in the blog repo
+- **[nextjs-dashboard][nextjs-dashboard]** A nextjs tutorial run-through
+- **[react-foundation][react-foundation]** A react tutorial run-through
 
 ## Certificates
 TLS (`https`) uses public/private key encryption to secure intial conversations.  I am exploring certificates here.

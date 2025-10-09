@@ -1,0 +1,33 @@
+{
+  "name": "next-comments-client",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build && (cd ../../comments-app && mv _next res && LC_ALL=C find ./ -type f -exec sed -i .bak 's|comments-app/_next|comments-app/res|g' {} \\; && rm *.bak && mkdir -p ../_includes/comments-app && cp index.html ../_includes/comments-app && echo 'TODO: clean up build script')",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "15.3.3",
+    "next-auth": "^4.24.11",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-query": "^3.39.3",
+    "remark": "^15.0.1",
+    "remark-html": "^16.0.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@next/env": "^15.3.4",
+    "@tailwindcss/postcss": "^4.1.10",
+    "@types/node": "^20.19.1",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "eslint": "^9.29.0",
+    "eslint-config-next": "15.3.3",
+    "tailwindcss": "^4.1.10",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}
