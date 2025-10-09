@@ -5,7 +5,8 @@
 
 [//]: # (Blog Posts)
 [me.tls-certificates]: https://stephensmithwick.github.io/tls/tls-certificates.html
-[me.disable-gateKeeper]: https://stephensmithwick.github.io/dev-desktop/Disable-GateKeeper.html
+[me.disable-gateKeeper]: https://stephensmithwick.github.io/dev-desktop/Disable-GateKeeper.html\
+[me.aws-stateful-cdk]:https://stephensmithwick.github.io/devops/Message-Board.html
 
 [//]: # (Misc)
 [brewfile]: Brewfile
@@ -80,7 +81,7 @@ A collection of Rust Projects
 - **[LeetCode playground][py-leet]** some simple leetcode puzzles solved using `go`
 
 ## DevOps
-- **[state-cdk][state-cdk]** A stateful AWS Lambda Application using CDK
+- **[state-cdk][state-cdk]** A stateful AWS Lambda Application using CDK. See my blogpost on [A Stateful Lambda CDK ][me.aws-stateful-cdk]
 - **[terraform-local][terraform-local]** A basic terraform project using [LocalStack][localstack]
 
 ## Certificates
