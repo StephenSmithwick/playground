@@ -1,5 +1,6 @@
 [//]: # (External)
 [rust-book]: https://doc.rust-lang.org/book/title-page.html
+[me.tls-certificates]: https://stephensmithwick.github.io/tls/tls-certificates.html
 
 [//]: # (Misc)
 [brewfile]: Brewfile
@@ -44,3 +45,8 @@ A collection of Rust Projects
 - [smol-reagent][smol-reagent] - An AI Agent written in Rust using a local model hosted by llamma.cpp using smol instead of tokio
 - [rust-lang-book][rust-lang-book] - My workthrough of the code in the [Rust Programming Language Book][rust-book]
 - [streaming-math][streaming-math] - An early investigation of doing streaming io in rust
+
+
+## Certificates
+TLS (`https`) uses public/private key encryption to secure intial conversations.  I am exploring certificates here.
+- [certificate-play][certificate-play] -  This is an exploration of creating my own root certificate.  See also my blogpost on [TLS Certificates][me.tls-certificates]
