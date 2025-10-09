@@ -1,5 +1,6 @@
 [//]: # (External)
 [rust-book]: https://doc.rust-lang.org/book/title-page.html
+[localstack]: https://github.com/localstack/localstack
 
 [//]: # (Blog Posts)
 [me.tls-certificates]: https://stephensmithwick.github.io/tls/tls-certificates.html
@@ -29,6 +30,12 @@
 [nextjs-dashboard]: /js/nextjs-dashboard
 [react-foundation]: /js/react-foundation
 
+[//]: # (DevOps)
+[state-cdk]: /devops/state-cdk
+[state-tf]: /devops/state-tf
+[terraform-local]: /devops/terraform-local
+
+
 # 🛝Playground 
 A super repo with a collection of projects with low thresholds to start.  If I like a project it may graduate from here.
 
@@ -54,6 +61,10 @@ A collection of Rust Projects
 - **[next-comments-client][next-comments-client]** A thin client for the above service - after experimentation - a solid implementation was created in the blog repo
 - **[nextjs-dashboard][nextjs-dashboard]** A nextjs tutorial run-through
 - **[react-foundation][react-foundation]** A react tutorial run-through
+
+## DevOps
+- **[state-cdk][state-cdk]** A stateful AWS Lambda Application using CDK
+- **[terraform-local][terraform-local]** A basic terraform project using [LocalStack][localstack]
 
 ## Certificates
 TLS (`https`) uses public/private key encryption to secure intial conversations.  I am exploring certificates here.

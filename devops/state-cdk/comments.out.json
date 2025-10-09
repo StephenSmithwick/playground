@@ -1,0 +1,12 @@
+{
+  "CommentsStore": {
+    "ExportsOutputRefCommentsC715514CAF58A16E": "CommentsStore-CommentsC715514C-YBQN0XWB56X1",
+    "ExportsOutputFnGetAttCommentsC715514CArn8FC52CC4": "arn:aws:dynamodb:us-west-2:121255975220:table/CommentsStore-CommentsC715514C-YBQN0XWB56X1"
+  },
+  "CommentsInterface": {
+    "createMessageFunctionurl": "https://lg3jrdx22dss2zkzallbvde3ki0ysrgx.lambda-url.us-west-2.on.aws/",
+    "deleteMessageFunctionurl": "https://72i6uqg6h2rq6or6tnh3kyslfm0xzyns.lambda-url.us-west-2.on.aws/",
+    "listMessagesFunctionurl": "https://2b4x37j357c53sshz7jnsi5zty0ybojc.lambda-url.us-west-2.on.aws/",
+    "updateMessageFunctionurl": "https://6jhg23jw35wy7lnyr4fk6x3kfi0tgvvg.lambda-url.us-west-2.on.aws/"
+  }
+}

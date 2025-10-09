@@ -1,0 +1,27 @@
+{
+  "name": "lambda-comments",
+  "version": "1.0.0",
+  "description": "Running four Lambdas to do CRUD operations for Comments",
+  "private": true,
+  "scripts": {
+    "postinstall": "(cd lambdas && npm install);",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "cdk": "cdk"
+  },
+  "author": {
+    "name": "Stephen Smithwick <stephen.smithwick@gmail.com>",
+    "url": "https://stephensmithwick.github.io"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/node": "*",
+    "aws-cdk": "*",
+    "esbuild": "*",
+    "typescript": "~5.8.3"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.197.0",
+    "constructs": "^10.4.2"
+  }
+}
