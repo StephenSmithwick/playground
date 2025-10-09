@@ -1,0 +1,22 @@
+body {
+    background-color: #fff;
+    color: #333;
+}
+
+button {
+    color: inherit;
+    background-color: inherit;
+    border: none;
+}
+
+button:active {
+    min-width: 800px;
+    min-height: 600px;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #333;
+        color: #fff;
+    }
+}

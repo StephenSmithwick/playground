@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Capture Screen",
+  "version": "0.1",
+
+  "description": "Simple Screenshot tool using getDisplayMedia",
+
+  "icons": {
+    "48": "capture48.png"
+  },
+
+  "action": {
+    "default_popup": "capture.html",
+    "default_icon": "capture.png"
+  },
+
+  "permissions": ["downloads"]
+}

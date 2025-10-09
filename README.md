@@ -8,6 +8,7 @@
 [//]: # (Misc)
 [brewfile]: Brewfile
 [osx-allow-unsigned.sh]: /osx-fixes/allow-unsigned.sh
+[capture-screen]: /extensions/CaptureScreen
 
 [//]: # (User Scripts)
 [blog.leetcode]: /user-scripts/blog.leetcode.user.js
@@ -34,13 +35,6 @@ cd playground
 brew bundle
 ```
 
-## User Scripts
-A collection of userscripts that I use with 
-- **[blog.leetcode][blog.leetcode]** Enhances the blog post [LeetCode - Algorithms](https://stephensmithwick.github.io/leetcode/leetcode-algorithms.html) with additional decorations
-- **[m.youtube.noshorts][m.youtube.noshorts]** Removes Shorts from mobile YouTube.
-- **[linkedin.nosponsored.user][linkedin.nosponsored.user]** Removes sponsored messages from LinkedIn.
-- **[copyToMarkdown][copyToMarkdown]** Copies the current URL as a Markdown link.
-
 ## Rust
 A collection of Rust Projects
 - [pi][pi] - An experiment with qwen code generation to see how well it generates rust code.  Some work was needed to update the generated code for more recent rust: 
@@ -58,3 +52,14 @@ TLS (`https`) uses public/private key encryption to secure intial conversations.
 ## OSX Fixes
 
 - [osx-allow-unsigned.sh][osx-allow-unsigned.sh] - Allows unsigned apps to be installed by disabling Gatekeeper. See my blogpost on [Disabling Gatekeeper][me.disable-gateKeeper]
+
+## User Scripts
+A collection of userscripts that I use with 
+- **[blog.leetcode][blog.leetcode]** Enhances the blog post [LeetCode - Algorithms](https://stephensmithwick.github.io/leetcode/leetcode-algorithms.html) with additional decorations
+- **[m.youtube.noshorts][m.youtube.noshorts]** Removes Shorts from mobile YouTube.
+- **[linkedin.nosponsored.user][linkedin.nosponsored.user]** Removes sponsored messages from LinkedIn.
+- **[copyToMarkdown][copyToMarkdown]** Copies the current URL as a Markdown link.
+
+## Extensions
+Web Extensions that I have created for myself.
+- **[Capture Screen][capture-screen]** A chrome targetted extension which captures a screenshot using `navigator.mediaDevices.getDisplayMedia`
