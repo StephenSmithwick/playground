@@ -1,9 +1,13 @@
 [//]: # (External)
 [rust-book]: https://doc.rust-lang.org/book/title-page.html
+
+[//]: # (Blog Posts)
 [me.tls-certificates]: https://stephensmithwick.github.io/tls/tls-certificates.html
+[me.disable-gateKeeper]: https://stephensmithwick.github.io/dev-desktop/Disable-GateKeeper.html
 
 [//]: # (Misc)
 [brewfile]: Brewfile
+[osx-allow-unsigned.sh]: /osx-fixes/allow-unsigned.sh
 
 [//]: # (User Scripts)
 [blog.leetcode]: /user-scripts/blog.leetcode.user.js
@@ -49,4 +53,8 @@ A collection of Rust Projects
 
 ## Certificates
 TLS (`https`) uses public/private key encryption to secure intial conversations.  I am exploring certificates here.
-- [certificate-play][certificate-play] -  This is an exploration of creating my own root certificate.  See also my blogpost on [TLS Certificates][me.tls-certificates]
+- [certificate-play][certificate-play] -  This is an exploration of creating my own root certificate.  See my blogpost on [TLS Certificates][me.tls-certificates]
+
+## OSX Fixes
+
+- [osx-allow-unsigned.sh][osx-allow-unsigned.sh] - Allows unsigned apps to be installed by disabling Gatekeeper. See my blogpost on [Disabling Gatekeeper][me.disable-gateKeeper]
