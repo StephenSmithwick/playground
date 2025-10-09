@@ -1,3 +1,6 @@
+[//]: # (External)
+[rust-book]: https://doc.rust-lang.org/book/title-page.html
+
 [//]: # (Misc)
 [brewfile]: Brewfile
 
@@ -6,6 +9,13 @@
 [m.youtube.noshorts]: /user-scripts/m.youtube.noshorts.user.js
 [linkedin.nosponsored.user]: /user-scripts/linkedin.nosponsored.user.js
 [copyToMarkdown]: /user-scripts/copyToMarkdown.user.js
+
+[//]: # (Rust)
+[pi]: /rust/pi
+[reagent]: /rust/reagent
+[smol-reagent]: /rust/smol-reagent
+[rust-lang-book]: /rust/rust-lang-book
+[streaming-math]: /rust/streaming-math
 
 
 # 🛝Playground 
@@ -25,3 +35,12 @@ A collection of userscripts that I use with
 - **[m.youtube.noshorts][m.youtube.noshorts]** Removes Shorts from mobile YouTube.
 - **[linkedin.nosponsored.user][linkedin.nosponsored.user]** Removes sponsored messages from LinkedIn.
 - **[copyToMarkdown][copyToMarkdown]** Copies the current URL as a Markdown link.
+
+## Rust
+A collection of Rust Projects
+- [pi][pi] - An experiment with qwen code generation to see how well it generates rust code.  Some work was needed to update the generated code for more recent rust: 
+    `(cd rust/pi/src; diff main.rs main.qwen.rs)`
+- [reagent][reagent] - An AI Agent written in Rust using a local model hosted by llamma.cpp
+- [smol-reagent][smol-reagent] - An AI Agent written in Rust using a local model hosted by llamma.cpp using smol instead of tokio
+- [rust-lang-book][rust-lang-book] - My workthrough of the code in the [Rust Programming Language Book][rust-book]
+- [streaming-math][streaming-math] - An early investigation of doing streaming io in rust

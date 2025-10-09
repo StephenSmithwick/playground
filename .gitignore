@@ -1,0 +1,16 @@
+.env
+.terraform
+
+# OSX
+.DS_Store
+
+# Rust
+**/target
+
+# Node
+node_modules
+
+# CDK
+cdk.context.json
+.cdk.staging
+cdk.out
