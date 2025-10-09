@@ -1,6 +1,7 @@
 [//]: # (External)
 [rust-book]: https://doc.rust-lang.org/book/title-page.html
 [localstack]: https://github.com/localstack/localstack
+[fastapi]: https://fastapi.tiangolo.com/
 
 [//]: # (Blog Posts)
 [me.tls-certificates]: https://stephensmithwick.github.io/tls/tls-certificates.html
@@ -29,6 +30,14 @@
 [next-comments-client]: /js/next-comments-client
 [nextjs-dashboard]: /js/nextjs-dashboard
 [react-foundation]: /js/react-foundation
+
+[//]: # (GoLang)
+[ct]: /golang/ct
+[go-leet]: /golang/leetcode
+
+[//]: # (Python)
+[testFastAPI]: /python/testFastAPI
+[py-leet]: /python/leetcode
 
 [//]: # (DevOps)
 [state-cdk]: /devops/state-cdk
@@ -61,6 +70,14 @@ A collection of Rust Projects
 - **[next-comments-client][next-comments-client]** A thin client for the above service - after experimentation - a solid implementation was created in the blog repo
 - **[nextjs-dashboard][nextjs-dashboard]** A nextjs tutorial run-through
 - **[react-foundation][react-foundation]** A react tutorial run-through
+
+## Python
+- **[testFastAPI][testFastAPI]** An exploration of the [FastAPI](fastapi) Framework which generates Restful APIs and documentation following the Swagger/OpenAPi standard
+- **[LeetCode playground][py-leet]** A number of simple leetcode puzzles solved using `python`
+
+## GoLang
+- **[ct][ct]** An exploration of CertificateTransparency(CT) APIs. The CT api provides a list of all certificates created by participating Certificate Authorities.
+- **[LeetCode playground][py-leet]** some simple leetcode puzzles solved using `go`
 
 ## DevOps
 - **[state-cdk][state-cdk]** A stateful AWS Lambda Application using CDK

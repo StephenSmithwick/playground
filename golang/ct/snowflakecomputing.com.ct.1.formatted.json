@@ -1,0 +1,365 @@
+{
+  "code": 200,
+  "status": "OK",
+  "result": {
+    "query": "snowflakecomputing.com",
+    "total": 12318.0,
+    "duration_ms": 3125,
+    "hits": [
+      {
+        "parsed": {
+          "subject_dn": "CN=snowflakecomputing.com",
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3",
+          "validity_period": {
+            "not_before": "2021-08-26T23:43:46Z",
+            "not_after": "2021-11-24T23:43:45Z"
+          }
+        },
+        "names": [
+          "snowflakecomputing.com"
+        ],
+        "fingerprint_sha256": "fe5acf4e100f32e65e5cf7d028df55729ce12552a4da50818634b796dca85666"
+      },
+      {
+        "parsed": {
+          "subject_dn": "CN=snowflakecomputing.com",
+          "validity_period": {
+            "not_before": "2021-12-24T23:43:36Z",
+            "not_after": "2022-03-24T23:43:35Z"
+          },
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3"
+        },
+        "names": [
+          "snowflakecomputing.com"
+        ],
+        "fingerprint_sha256": "3430b1143de7c0cf53fca0a460d5e370364bca8dfe99748c1266b4d5a28ad630"
+      },
+      {
+        "fingerprint_sha256": "c5be0c27ef8f02e8e56f6a33b5c029a63c6eb9679247f7d58191d3aaa41ea7db",
+        "names": [
+          "snowflakecomputing.com"
+        ],
+        "parsed": {
+          "validity_period": {
+            "not_before": "2022-04-23T23:43:58Z",
+            "not_after": "2022-07-22T23:43:57Z"
+          },
+          "subject_dn": "CN=snowflakecomputing.com",
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3"
+        }
+      },
+      {
+        "parsed": {
+          "validity_period": {
+            "not_before": "2021-04-28T23:45:59Z",
+            "not_after": "2021-07-27T23:45:59Z"
+          },
+          "subject_dn": "CN=snowflakecomputing.com",
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3"
+        },
+        "names": [
+          "snowflakecomputing.com"
+        ],
+        "fingerprint_sha256": "d3613a65536caeb537ac92894b062764300971a443e9e84cb30bec191e159a25"
+      },
+      {
+        "parsed": {
+          "subject_dn": "CN=snowflakecomputing.com",
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3",
+          "validity_period": {
+            "not_before": "2022-12-19T22:46:50Z",
+            "not_after": "2023-03-19T22:46:49Z"
+          }
+        },
+        "names": [
+          "snowflakecomputing.com"
+        ],
+        "fingerprint_sha256": "b3e5ee419b47bb48291731efe6fa30fe52f0bfe1306776b40df057dfc3e8a70d"
+      },
+      {
+        "names": [
+          "snowflakecomputing.com"
+        ],
+        "fingerprint_sha256": "407b2d7a63656d3ea581d7e5db2c92ecfd78cb79a6ddca5853af7f3292350790",
+        "parsed": {
+          "validity_period": {
+            "not_after": "2023-07-17T20:56:18Z",
+            "not_before": "2023-04-18T20:56:19Z"
+          },
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3",
+          "subject_dn": "CN=snowflakecomputing.com"
+        }
+      },
+      {
+        "fingerprint_sha256": "e3244e9e84bc9dc0f66b1404dd4078339c6453cc9292bef8211672fc0b6971b0",
+        "parsed": {
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3",
+          "subject_dn": "CN=snowflakecomputing.com",
+          "validity_period": {
+            "not_after": "2021-03-29T23:48:47Z",
+            "not_before": "2020-12-29T23:48:47Z"
+          }
+        },
+        "names": [
+          "snowflakecomputing.com"
+        ]
+      },
+      {
+        "names": [
+          "snowflakecomputing.com"
+        ],
+        "parsed": {
+          "validity_period": {
+            "not_before": "2023-06-17T20:01:27Z",
+            "not_after": "2023-09-15T20:01:26Z"
+          },
+          "subject_dn": "CN=snowflakecomputing.com",
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3"
+        },
+        "fingerprint_sha256": "c87e18887c578bf3371d8612322b6aba7ba89f29ee73dd867bda33de625cf853"
+      },
+      {
+        "names": [
+          "snowflakecomputing.com"
+        ],
+        "parsed": {
+          "validity_period": {
+            "not_after": "2023-11-14T19:06:52Z",
+            "not_before": "2023-08-16T19:06:53Z"
+          },
+          "subject_dn": "CN=snowflakecomputing.com",
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3"
+        },
+        "fingerprint_sha256": "df7452960c68c0cf665f078f347afd30ae462579a8b205f30fcc0c6a12c08ae2"
+      },
+      {
+        "names": [
+          "snowflakecomputing.com"
+        ],
+        "parsed": {
+          "subject_dn": "CN=snowflakecomputing.com",
+          "validity_period": {
+            "not_after": "2021-05-28T23:43:33Z",
+            "not_before": "2021-02-27T23:43:33Z"
+          },
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3"
+        },
+        "fingerprint_sha256": "e1397ce9bb5c869f369368dbf2be127f071219ae6c19c91485192d5ae1b8a684"
+      },
+      {
+        "fingerprint_sha256": "0046f34a94ba46d0ecc6e7647f599de7234cfbedd71b09170bb33fc3817fe949",
+        "parsed": {
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3",
+          "validity_period": {
+            "not_before": "2021-10-25T23:44:24Z",
+            "not_after": "2022-01-23T23:44:23Z"
+          },
+          "subject_dn": "CN=snowflakecomputing.com"
+        },
+        "names": [
+          "snowflakecomputing.com"
+        ]
+      },
+      {
+        "fingerprint_sha256": "16b21bafb380a5a69b4eeef7fb4b6566a50f7e0c0993b3af37a3f9bd1af4c0d9",
+        "names": [
+          "snowflakecomputing.com"
+        ],
+        "parsed": {
+          "validity_period": {
+            "not_before": "2022-10-20T23:44:07Z",
+            "not_after": "2023-01-18T23:44:06Z"
+          },
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3",
+          "subject_dn": "CN=snowflakecomputing.com"
+        }
+      },
+      {
+        "fingerprint_sha256": "bd23faaad6ee5473d77a18b9a4cddc28666b1d5faec5e308ebd2a560c5b27223",
+        "parsed": {
+          "subject_dn": "CN=snowflakecomputing.com",
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3",
+          "validity_period": {
+            "not_before": "2021-06-27T23:43:27Z",
+            "not_after": "2021-09-25T23:43:26Z"
+          }
+        },
+        "names": [
+          "snowflakecomputing.com"
+        ]
+      },
+      {
+        "names": [
+          "snowflakecomputing.com"
+        ],
+        "parsed": {
+          "validity_period": {
+            "not_after": "2024-01-13T18:11:26Z",
+            "not_before": "2023-10-15T18:11:27Z"
+          },
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3",
+          "subject_dn": "CN=snowflakecomputing.com"
+        },
+        "fingerprint_sha256": "560ecc32c66fea35ad07de1104108334b5922d05986d2a23f83e26dc92d00eca"
+      },
+      {
+        "names": [
+          "snowflakecomputing.com"
+        ],
+        "fingerprint_sha256": "ef7510cea9523240976cee68b10381f15452f29873696f4358846233c2c9464e",
+        "parsed": {
+          "validity_period": {
+            "not_after": "2024-03-13T17:16:22Z",
+            "not_before": "2023-12-14T17:16:23Z"
+          },
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3",
+          "subject_dn": "CN=snowflakecomputing.com"
+        }
+      },
+      {
+        "parsed": {
+          "subject_dn": "CN=sfc-static-cdntest1.snowflakecomputing.com",
+          "validity_period": {
+            "not_after": "2022-06-29T17:45:49Z",
+            "not_before": "2022-03-31T17:45:50Z"
+          },
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3"
+        },
+        "names": [
+          "sfc-static-cdntest1.snowflakecomputing.com"
+        ],
+        "fingerprint_sha256": "7f1cbf70f7710fe39bb7bbecb77f2595bf806844a81c65e82715e908f501bad6"
+      },
+      {
+        "names": [
+          "sfc-static-cdntest1.snowflakecomputing.com"
+        ],
+        "parsed": {
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3",
+          "validity_period": {
+            "not_before": "2022-11-26T17:12:16Z",
+            "not_after": "2023-02-24T17:12:15Z"
+          },
+          "subject_dn": "CN=sfc-static-cdntest1.snowflakecomputing.com"
+        },
+        "fingerprint_sha256": "922d99e295c6fc1bb853c12efbd3e855acc71e74889c6840d5420340f0071491"
+      },
+      {
+        "parsed": {
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=Let's Encrypt Authority X3",
+          "subject_dn": "CN=snowflakecomputing.com",
+          "validity_period": {
+            "not_after": "2020-08-01T23:44:57Z",
+            "not_before": "2020-05-03T23:44:57Z"
+          }
+        },
+        "fingerprint_sha256": "f8dcd945da5cf9aee8e55afd43c3b6300ce18166a002946a444dabfeb3f91cfe",
+        "names": [
+          "snowflakecomputing.com"
+        ]
+      },
+      {
+        "names": [
+          "sfc-static-cdntest1.snowflakecomputing.com"
+        ],
+        "parsed": {
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3",
+          "validity_period": {
+            "not_before": "2020-12-05T23:46:47Z",
+            "not_after": "2021-03-05T23:46:47Z"
+          },
+          "subject_dn": "CN=sfc-static-cdntest1.snowflakecomputing.com"
+        },
+        "fingerprint_sha256": "c885850aa84ed5492d910b54bf9ae53dcd6a751d79abb62e624d657d79d5f38c"
+      },
+      {
+        "names": [
+          "sfc-static-cdntest1.snowflakecomputing.com"
+        ],
+        "fingerprint_sha256": "5a89d61cbbeb6b107884b5173b0ab0fd3d585eeb630c6ef7c6adf2df272f6085",
+        "parsed": {
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3",
+          "validity_period": {
+            "not_before": "2022-07-29T17:44:26Z",
+            "not_after": "2022-10-27T17:44:25Z"
+          },
+          "subject_dn": "CN=sfc-static-cdntest1.snowflakecomputing.com"
+        }
+      },
+      {
+        "parsed": {
+          "validity_period": {
+            "not_after": "2022-03-01T17:46:14Z",
+            "not_before": "2021-12-01T17:46:15Z"
+          },
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3",
+          "subject_dn": "CN=sfc-static-cdntest1.snowflakecomputing.com"
+        },
+        "names": [
+          "sfc-static-cdntest1.snowflakecomputing.com"
+        ],
+        "fingerprint_sha256": "270a864331fa7e4244d289161b0358e6d17756ae76d15a833417b4475e825a7a"
+      },
+      {
+        "names": [
+          "sfc-static-cdntest1.snowflakecomputing.com"
+        ],
+        "parsed": {
+          "validity_period": {
+            "not_before": "2021-04-04T23:44:27Z",
+            "not_after": "2021-07-03T23:44:27Z"
+          },
+          "subject_dn": "CN=sfc-static-cdntest1.snowflakecomputing.com",
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3"
+        },
+        "fingerprint_sha256": "d83e93f1fec15370bffc1010b70418a03c2b25aa50ac451a3b9d93b4602610b4"
+      },
+      {
+        "names": [
+          "snowflakecomputing.com"
+        ],
+        "fingerprint_sha256": "54c64a0701e90c3b15cf55e23ef0f7ad8f9794314b0c745df904473f24192619",
+        "parsed": {
+          "validity_period": {
+            "not_before": "2020-03-04T20:07:09Z",
+            "not_after": "2020-06-02T20:07:09Z"
+          },
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=Let's Encrypt Authority X3",
+          "subject_dn": "CN=snowflakecomputing.com"
+        }
+      },
+      {
+        "names": [
+          "sfc-static-cdntest1.snowflakecomputing.com"
+        ],
+        "fingerprint_sha256": "3d377a66e6036319d1ccc03f599fc63daa9ad393b776bf75c6fc4f7231481557",
+        "parsed": {
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3",
+          "subject_dn": "CN=sfc-static-cdntest1.snowflakecomputing.com",
+          "validity_period": {
+            "not_before": "2022-09-27T17:46:18Z",
+            "not_after": "2022-12-26T17:46:17Z"
+          }
+        }
+      },
+      {
+        "names": [
+          "sfc-static-cdntest1.snowflakecomputing.com"
+        ],
+        "parsed": {
+          "subject_dn": "CN=sfc-static-cdntest1.snowflakecomputing.com",
+          "validity_period": {
+            "not_before": "2023-01-25T16:17:45Z",
+            "not_after": "2023-04-25T16:17:44Z"
+          },
+          "issuer_dn": "C=US, O=Let's Encrypt, CN=R3"
+        },
+        "fingerprint_sha256": "2bb6b1ce207b6d665e069cd40175fd74f68827512dc7641984aaa866ac9f1e8c"
+      }
+    ],
+    "links": {
+      "next": "eyJhbGciOiJFZERTQSJ9.eyJub25jZSI6IjRWMXNYdU5FU1d3RXY3MjVtZjZ5NytIc3NFbENvQ21qRmJZOWdKN0FsWHMiLCJwYWdlIjoyLCJyZXZlcnNlZCI6ZmFsc2UsInNlYXJjaF9hZnRlciI6WzQzLjQ3MjAyMywtOTIyMzM3MjAzNjg1NDc3NTgwOCwxNjc0NjYzNDY1MDAwLCIyYmI2YjFjZTIwN2I2ZDY2NWUwNjljZDQwMTc1ZmQ3NGY2ODgyNzUxMmRjNzY0MTk4NGFhYTg2NmFjOWYxZThjIl0sInNvcnQiOlt7Il9zY29yZSI6eyJvcmRlciI6ImRlc2MifX0seyJ2YWxpZGF0aW9uLmNocm9tZS5pc192YWxpZCI6eyJtaXNzaW5nIjoiX2xhc3QiLCJtb2RlIjoibWluIiwib3JkZXIiOiJkZXNjIn19LHsicGFyc2VkLnZhbGlkaXR5X3BlcmlvZC5ub3RfYmVmb3JlIjp7Im1pc3NpbmciOiJfbGFzdCIsIm1vZGUiOiJtaW4iLCJvcmRlciI6ImRlc2MifX0seyJmaW5nZXJwcmludF9zaGEyNTYuX19yYXciOnsibWlzc2luZyI6Il9sYXN0IiwibW9kZSI6Im1pbiIsIm9yZGVyIjoiYXNjIn19XSwidmVyc2lvbiI6MX0.mJdgEoYHTWb8FF6W1NXLcow6yAFdxf1QRZ7L_nJghiygf023NhhAkF195QcJntNODoX0pxGgnD7qV4UuGzgKBQ",
+      "prev": ""
+    }
+  }
+}
