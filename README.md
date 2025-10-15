@@ -67,7 +67,6 @@ A collection of Rust Projects
 - **[streaming-math][streaming-math]** An early investigation of doing streaming io in rust
 
 ## Javascript
-- **[next-comments][next-comments]** A vercel/neon service for post comments.  Currently not secure
 - **[next-comments-client][next-comments-client]** A thin client for the above service - after experimentation - a solid implementation was created in the blog repo
 - **[nextjs-dashboard][nextjs-dashboard]** A nextjs tutorial run-through
 - **[react-foundation][react-foundation]** A react tutorial run-through
