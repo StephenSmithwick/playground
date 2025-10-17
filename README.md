@@ -27,6 +27,7 @@
 [streaming-math]: /rust/streaming-math
 
 [//]: # (Javascript)
+[agentia]: /js/agentia
 [next-comments]: /js/next-comments
 [next-comments-client]: /js/next-comments-client
 [nextjs-dashboard]: /js/nextjs-dashboard
@@ -67,6 +68,7 @@ A collection of Rust Projects
 - **[streaming-math][streaming-math]** An early investigation of doing streaming io in rust
 
 ## Javascript
+- **[agentia][agentia]** A local llm client built with typescript and ink
 - **[next-comments-client][next-comments-client]** A thin client for the above service - after experimentation - a solid implementation was created in the blog repo
 - **[nextjs-dashboard][nextjs-dashboard]** A nextjs tutorial run-through
 - **[react-foundation][react-foundation]** A react tutorial run-through
