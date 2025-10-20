@@ -11,6 +11,9 @@ importers:
       ink:
         specifier: ^4.1.0
         version: 4.4.1(@types/react@18.3.26)(react@18.3.1)
+      ink-text-input:
+        specifier: ^6.0.0
+        version: 6.0.0(ink@4.4.1(@types/react@18.3.26)(react@18.3.1))(react@18.3.1)
       meow:
         specifier: ^11.0.0
         version: 11.0.0
@@ -1200,6 +1203,13 @@ packages:
       '@types/react':
         optional: true
 
+  ink-text-input@6.0.0:
+    resolution: {integrity: sha512-Fw64n7Yha5deb1rHY137zHTAbSTNelUKuB5Kkk2HACXEtwIHBCf9OH2tP/LQ9fRYTl1F0dZgbW0zPnZk6FA9Lw==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      ink: '>=5'
+      react: '>=18'
+
   ink@4.4.1:
     resolution: {integrity: sha512-rXckvqPBB0Krifk5rn/5LvQGmyXwCUpBfmTwbkQNBY9JY8RSl3b8OftBNEYxg4+SWUhEKcPifgope28uL9inlA==}
     engines: {node: '>=14.16'}
@@ -2300,6 +2310,10 @@ packages:
     resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
     engines: {node: '>=14.16'}
 
+  type-fest@4.41.0:
+    resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
+    engines: {node: '>=16'}
+
   typed-array-buffer@1.0.3:
     resolution: {integrity: sha512-nAYYwfY3qnzX30IkA6AQZjVbtK6duGontcQm1WSG1MD94YLqK0515GNApXkoxKOWMusVssAHWLh9SeaoefYFGw==}
     engines: {node: '>= 0.4'}
@@ -3356,7 +3370,7 @@ snapshots:
     dependencies:
       debug: 3.2.7
       enhanced-resolve: 0.9.1
-      eslint-plugin-import: 2.32.0(eslint-import-resolver-webpack@0.13.10)(eslint@8.57.1)
+      eslint-plugin-import: 2.32.0(eslint-import-resolver-webpack@0.13.10(eslint-plugin-import@2.32.0(eslint@8.57.1))(webpack@5.102.1))(eslint@8.57.1)
       find-root: 1.1.0
       hasown: 2.0.2
       interpret: 1.4.0
@@ -3403,7 +3417,7 @@ snapshots:
       eslint: 8.57.1
       ignore: 5.3.2
 
-  eslint-plugin-import@2.32.0(eslint-import-resolver-webpack@0.13.10)(eslint@8.57.1):
+  eslint-plugin-import@2.32.0(eslint-import-resolver-webpack@0.13.10(eslint-plugin-import@2.32.0(eslint@8.57.1))(webpack@5.102.1))(eslint@8.57.1):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.9
@@ -3842,6 +3856,13 @@ snapshots:
   ink-testing-library@3.0.0(@types/react@18.3.26):
     optionalDependencies:
       '@types/react': 18.3.26
+
+  ink-text-input@6.0.0(ink@4.4.1(@types/react@18.3.26)(react@18.3.1))(react@18.3.1):
+    dependencies:
+      chalk: 5.6.2
+      ink: 4.4.1(@types/react@18.3.26)(react@18.3.1)
+      react: 18.3.1
+      type-fest: 4.41.0
 
   ink@4.4.1(@types/react@18.3.26)(react@18.3.1):
     dependencies:
@@ -4958,6 +4979,8 @@ snapshots:
 
   type-fest@3.13.1: {}
 
+  type-fest@4.41.0: {}
+
   typed-array-buffer@1.0.3:
     dependencies:
       call-bound: 1.0.4
@@ -5151,7 +5174,7 @@ snapshots:
       eslint-import-resolver-webpack: 0.13.10(eslint-plugin-import@2.32.0(eslint@8.57.1))(webpack@5.102.1)
       eslint-plugin-ava: 13.2.0(eslint@8.57.1)
       eslint-plugin-eslint-comments: 3.2.0(eslint@8.57.1)
-      eslint-plugin-import: 2.32.0(eslint-import-resolver-webpack@0.13.10)(eslint@8.57.1)
+      eslint-plugin-import: 2.32.0(eslint-import-resolver-webpack@0.13.10(eslint-plugin-import@2.32.0(eslint@8.57.1))(webpack@5.102.1))(eslint@8.57.1)
       eslint-plugin-n: 15.7.0(eslint@8.57.1)
       eslint-plugin-no-use-extend-native: 0.5.0
       eslint-plugin-prettier: 4.2.5(eslint-config-prettier@8.10.2(eslint@8.57.1))(eslint@8.57.1)(prettier@2.8.8)

@@ -1,5 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {render, Text, Box, Newline} from 'ink';
+import TextInput from 'ink-text-input';
 
 type Props = {
 	name?: string;
@@ -22,94 +23,107 @@ export default function App({name = 'Stranger'}: Props) {
 	const [reason, setReason] = useState('...');
 	const [content, setContent] = useState('...');
 	const [error, setError] = useState('');
+	const [query, setQuery] = useState('Why is the sky blue?');
 
-	useEffect(() => {
-		async function talkToModel() {
-			try {
-				const res = await fetch('http://localhost:8080/v1/chat/completions', {
-					method: 'POST',
-					body: JSON.stringify({
-						messages: [{role: 'user', content: 'Why is the sky blue?'}],
-						stream: true,
-					}),
-				});
+	async function talkToModel(query: string) {
+		try {
+			const res = await fetch('http://localhost:8080/v1/chat/completions', {
+				method: 'POST',
+				body: JSON.stringify({
+					messages: [{role: 'user', content: query}],
+					stream: true,
+				}),
+			});
 
-				if (!res.body) throw new Error('Response body missing.');
+			if (!res.body) throw new Error('Response body missing.');
 
-				const decoder = new TextDecoder();
-				let reasonBuf = '';
-				let contentBuf = '';
+			const decoder = new TextDecoder();
+			let reasonBuf = '';
+			let contentBuf = '';
 
-				for await (const chunk of res.body) {
-					const text = decoder
-						.decode(chunk, {stream: true})
-						.replace(/^data:\s*/gm, '')
-						.replace(/\[DONE\]/g, '')
-						.trim();
+			for await (const chunk of res.body) {
+				const text = decoder
+					.decode(chunk, {stream: true})
+					.replace(/^data:\s*/gm, '')
+					.replace(/\[DONE\]/g, '')
+					.trim();
 
-					if (!text) continue;
+				if (!text) continue;
 
-					let data: StreamChunk;
-					try {
-						data = JSON.parse(text);
-					} catch {
-						continue; // Skip malformed chunks
+				let data: StreamChunk;
+				try {
+					data = JSON.parse(text);
+				} catch {
+					continue; // Skip malformed chunks
+				}
+
+				for (const choice of data.choices) {
+					if (choice.delta.reasoning_content) {
+						reasonBuf += choice.delta.reasoning_content;
+						setReason(reasonBuf);
 					}
-
-					for (const choice of data.choices) {
-						if (choice.delta.reasoning_content) {
-							reasonBuf += choice.delta.reasoning_content;
-							setReason(reasonBuf);
-						}
-						if (choice.delta.content) {
-							contentBuf += choice.delta.content;
-							setContent(contentBuf);
-						}
+					if (choice.delta.content) {
+						contentBuf += choice.delta.content;
+						setContent(contentBuf);
 					}
 				}
-			} catch (err: unknown) {
-				setError(`Request failed: ${(err as Error).message}`);
 			}
+		} catch (err: unknown) {
+			setError(`Request failed: ${(err as Error).message}`);
 		}
+	}
 
-		talkToModel();
-	}, []);
+	function submit() {
+		setReason('...');
+		setContent('...');
+		setError('');
+		talkToModel(query);
+	}
 
 	return (
-		<Box flexDirection="column">
+		<Box flexDirection="column" borderStyle="doubleSingle" borderColor="green">
 			<Box>
-				<Text>{cowboy}</Text>
+				<Text color="blackBright" backgroundColor="redBright">
+					{cowboy}
+				</Text>
 				<Text>
-					<Newline />
-					<Newline />
-					Howdy {name}
+					<Newline /> <Newline /> Howdy {name}
 				</Text>
 			</Box>
 			<Text color="blue">{reason}</Text>
 			<Text color="green">{content}</Text>
 			{error && <Text color="red">{error}</Text>}
+			<Box>
+				<Box marginRight={1}>
+					<Text color="whiteBright" bold={true}>
+						Enter your query:
+					</Text>
+				</Box>
+
+				<TextInput value={query} onChange={setQuery} onSubmit={submit} />
+			</Box>
 		</Box>
 	);
 }
 
 const cowboy = `
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⣲⡂⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⣀⢠⣶⣶⡄⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⣶⣭⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣾⣤⣾⠀⠀⠀⠀⠀⠀⠙⢻⣿⣿⡟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⣿⣿⠁⠀⠀⠀⣠⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣶⣿⣿⣿⣿⣷⡀⠀⠀⠀⠀⠀⠀⣠⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⣿⣿⣀⣀⣻⣿⣿⡅⠀⠀⠀⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⣤⠄⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⣴⣾⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⣿⣿⣿⣿⣿⣿⣿⡇⠀⠐⠒⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣀⠀⢀⣴⣾⣿⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⣿⣿⣿⣿⣿⣿⣿⣇⣀⣀⣀⠀⠀⠀⠀⠀⣀⣤⣶⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠏⠉⠻⣿⣿⡇⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⠀⠀⠀⣰⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣏⠀⠀⠀⣹⡛⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⢸⣿⠀⠀⢲⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡯⠀⣉⡈⠥⠂⠀⠀⠀⢼⣿⣧⣹⣿⣿⣿⣿⣿⡇⢹⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⡌⠉⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⢸⡿⣼⣿⣿⣿⣿⣿⣿⣗⣾⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀⢸⣷⣿⣿⣿⣿⢿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠋⢻⣿⣿⣿⢸⣿⣿⣿⢻⢸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣴⣿⣿⣿⡟⣿⣿⣿⠟⠘⠀⠀⠈⠉⠉⢹⣿⣿⠃⢹⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⡇⢸⣿⣿⡿⢸⣸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠻⡟⣿⣿⣿⣿⣿⠟⠉⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠋⠀⠀⠀⠀⠀⠀⠀⠸⣿⣿⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣻⣿⡇⠘⣿⣿⢫⡸⣻⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀
-⠀⠀⠀⠉⠙⠃⠿⠀⠀⣈⠉⠉⠉⢸⣿⣿⣿⣿⣏⠁⠀⠀⡀⠀⠀⠀⠀⢀⣿⢧⠀⢸⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣻⣿⡇⠀⣿⡿⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀
-⠀⠀⡀⠸⠀⣦⣰⡀⢀⣏⡀⢀⠀⢸⣿⣹⡿⣿⣿⠀⢀⣰⣧⣤⣠⣶⣀⣾⣙⣘⣶⣾⣇⣤⣲⣿⣾⣴⣶⣄⠀⡠⠀⣈⡆⣠⣄⣹⣿⣃⣀⣿⣡⣆⣦⣄⣔⠀⣀⢠⠀⠄⣴⣀⣰⣿⣾⣶⣶⣶
-⠀⠀⣿⣤⢀⣾⣿⣿⣾⣿⣷⣼⣶⣿⣿⣿⣷⣿⣿⣾⣿⣿⣿⣿⣿⣤⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣿⣿⣷⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣿⣿⣶⣴⣿⣿⣿⣿⣿⣿⣿⣿
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⣀⢠⣶⣶⡄⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣾⣤⣾⠀⠀⠀⠀⠀⠀⠙⢻⣿⣿⡟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣶⣿⣿⣿⣿⣷⡀⠀⠀⠀⠀⠀⠀⣠⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⣤⠄⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⣴⣾⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣀⠀⢀⣴⣾⣿⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠏⠉⠻⣿⣿⡇⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣏⠀⠀⠀⣹⡛⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢲⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡯⣉⣉⡈⠥⠂⠀⠀⠀⢼⣿⣧⣹⣿⣿⣿⣿⣿⡇⢹⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⢸⡿⣼⣿⣿⣿⣿⣿⣿⣗⣾⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀⢸⣷⣿⣿⣿⣿⢿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠋⢻⣿⣿⣿⢸⣿⣿⣿⢻⢸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣴⣿⣿⣿⡟⣿⣿⣿⠟⠘⠀⠀⠈⠉⠉⢹⣿⣿⠃⢹⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⡇⢸⣿⣿⡿⢸⣸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⢿⣿⣿⣿⣿⣿⣿⣿⣿⠋⠀⠀⠀⠀⠀⠀⠀⠸⣿⣿⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣻⣿⡇⠘⣿⣿⢫⡸⣻⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠉⢸⣿⣿⣿⣿⣏⠁⠀⠀⡀⠀⠀⠀⠀⢀⣿⢧⠀⢸⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣻⣿⡇⠀⣿⡿⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣹⡿⣿⣿⠀⢀⣰⣧⣤⣠⣶⣀⣾⣙⣘⣶⣾⣇⣤⣲⣿⣾⣴⣶⣄⠀⡠⠀⣈⡆⣠⣄⣹⣿⣃⣀⣿⣡⣆⣦⣄⣔⠀⣀⢠⠀⠄⣴⣀⣰⣿⣾⣶⣦⡀
+⠀⠀⠀⣤⢀⣾⣿⣿⣾⣿⣷⣼⣶⣿⣿⣿⣷⣿⣿⣾⣿⣿⣿⣿⣿⣤⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣿⣿⣷⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣿⣿⣶⣴⣿⣿⣿⣿⣿⣿⣿⣿
 ⣶⣾⣿⣿⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 `;
 
