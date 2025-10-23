@@ -1,5 +1,6 @@
 use anyhow::Result;
 use futures::stream::StreamExt;
+use tokio::io::AsyncBufReadExt;
 use tokio_util::bytes::Bytes;
 
 use colored::Colorize;
@@ -18,14 +19,12 @@ async fn process_message(next: reqwest::Result<Bytes>) -> Result<()> {
     let json_str = trim_to_object(std::str::from_utf8(&unwrap)?); // Also propagate the UTF-8 error
     let message: llm::ChatMessage = serde_json::from_str(json_str)?; // Propagate the deserialization error
 
-    // println!("{:?}", message);
-
     for choice in message.choices {
         match choice {
             llm::Choice {
-                content: llm::ChoiceContent::Delta(llm::Delta::Empty { delta }),
+                content: llm::ChoiceContent::Delta(llm::Delta::Empty { delta: _ }),
                 ..
-            } => println!(":: {}", serde_json::to_string(&delta).unwrap().red()),
+            } => continue,
             llm::Choice {
                 content: llm::ChoiceContent::Delta(llm::Delta::Content { delta }),
                 ..
@@ -50,13 +49,20 @@ async fn process_message(next: reqwest::Result<Bytes>) -> Result<()> {
 
 #[tokio::main]
 async fn main() -> Result<(), reqwest::Error> {
+    let prompt = "Please enter your question:".magenta();
+    println!("{}", prompt);
+    let mut reader = tokio::io::BufReader::new(tokio::io::stdin());
+    let mut buffer = Vec::new();
+    let _ = reader.read_until(b'\n', &mut buffer).await;
+    let request = std::str::from_utf8(&buffer).unwrap_or("Why is the sky blue?");
+
     let response = reqwest::Client::new()
         .post("http://localhost:8080/v1/chat/completions")
         .json(&serde_json::json!({
             "messages": [
                 {
                     "role": "user",
-                    "content": "Why is the sky blue?"
+                    "content": request
                 }
             ],
             "stream": true
