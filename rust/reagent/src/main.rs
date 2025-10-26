@@ -17,9 +17,9 @@ fn trim_to_object(s: &str) -> &str {
 async fn process_message(next: reqwest::Result<Bytes>) -> Result<()> {
     let unwrap = next?; // Propagate the error with '?'
     let json_str = trim_to_object(std::str::from_utf8(&unwrap)?); // Also propagate the UTF-8 error
-    let message: llm::ChatMessage = serde_json::from_str(json_str)?; // Propagate the deserialization error
+    let response: llm::Response = serde_json::from_str(json_str)?; // Propagate the deserialization error
 
-    for choice in message.choices {
+    for choice in response.choices {
         match choice {
             llm::Choice {
                 content: llm::ChoiceContent::Delta(llm::Delta::Empty { delta: _ }),

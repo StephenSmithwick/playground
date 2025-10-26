@@ -1,12 +1,11 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
-pub struct ChatMessage {
+pub struct Response {
     pub id: String,
     pub object: String,
     pub created: u64,
     pub model: String,
-    #[serde(rename = "system_fingerprint")]
     pub system_fingerprint: String,
     pub choices: Vec<Choice>,
     pub timings: Option<Timings>,
@@ -16,7 +15,6 @@ pub struct ChatMessage {
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Choice {
     pub index: u32,
-    #[serde(rename = "finish_reason")]
     pub finish_reason: Option<String>,
 
     #[serde(flatten)]
@@ -100,7 +98,8 @@ pub struct Usage {
 
 #[cfg(test)]
 mod tests {
-    use super::*; // Import items from the outer scope
+    use super::*;
+
     const NO_STREAM: &str = r#"
         {"choices":[{"finish_reason":"stop","index":0,"message":{"role":"assistant","reasoning_content":"model reasoning"}}],"created":1,"model":"gpt-3.5-turbo","system_fingerprint":"b6510","object":"chat.completion","usage":{"completion_tokens":326,"prompt_tokens":14,"total_tokens":340},"id":"id","timings":{"cache_n":13,"prompt_n":1,"prompt_ms":20.325,"prompt_per_token_ms":20.0,"prompt_per_second":49.0,"predicted_n":326,"predicted_ms":3084.0,"predicted_per_token_ms":9.0,"predicted_per_second":105.0}}
         "#;
@@ -126,20 +125,23 @@ mod tests {
             STREAM_CONTENT,
             STREAM_END,
         ] {
-            let message: ChatMessage = serde_json::from_str(response).unwrap();
-            let serialized = serde_json::to_string(&message).unwrap();
-            let re_message: ChatMessage = serde_json::from_str(&serialized).unwrap();
+            let response: Response = serde_json::from_str(response).unwrap();
+            let serialized = serde_json::to_string(&response).unwrap();
+            let re_response: Response = serde_json::from_str(&serialized).unwrap();
 
-            assert_eq!(re_message, message);
+            assert_eq!(re_response, response);
         }
     }
 
     #[test]
     fn test_no_stream() {
-        let message: ChatMessage = serde_json::from_str(NO_STREAM).unwrap();
+        let response: Response = serde_json::from_str(NO_STREAM).unwrap();
 
-        assert_eq!(Some(String::from("stop")), message.choices[0].finish_reason);
-        match &message.choices[0].content {
+        assert_eq!(
+            Some(String::from("stop")),
+            response.choices[0].finish_reason
+        );
+        match &response.choices[0].content {
             ChoiceContent::Final(message) => match &message.message.content {
                 MessageContent::ReasoningOnly { reasoning_content } => {
                     assert_eq!(reasoning_content, "model reasoning")
@@ -152,10 +154,10 @@ mod tests {
 
     #[test]
     fn test_stream_thinking() {
-        let message: ChatMessage = serde_json::from_str(STREAM_THINKING).unwrap();
+        let response: Response = serde_json::from_str(STREAM_THINKING).unwrap();
 
-        assert_eq!(None, message.choices[0].finish_reason);
-        match &message.choices[0].content {
+        assert_eq!(None, response.choices[0].finish_reason);
+        match &response.choices[0].content {
             ChoiceContent::Delta(Delta::Content { delta }) => match delta {
                 ContentDelta::Reasoning { reasoning_content } => {
                     assert_eq!(reasoning_content, "Okay")
@@ -168,10 +170,10 @@ mod tests {
 
     #[test]
     fn test_stream_content() {
-        let message: ChatMessage = serde_json::from_str(STREAM_CONTENT).unwrap();
+        let response: Response = serde_json::from_str(STREAM_CONTENT).unwrap();
 
-        assert_eq!(None, message.choices[0].finish_reason);
-        match &message.choices[0].content {
+        assert_eq!(None, response.choices[0].finish_reason);
+        match &response.choices[0].content {
             ChoiceContent::Delta(Delta::Content { delta }) => match delta {
                 ContentDelta::Content { content } => {
                     assert_eq!(content, ".")
@@ -184,10 +186,10 @@ mod tests {
 
     #[test]
     fn test_stream_start() {
-        let message: ChatMessage = serde_json::from_str(STREAM_START_ROLE).unwrap();
+        let response: Response = serde_json::from_str(STREAM_START_ROLE).unwrap();
 
-        assert_eq!(None, message.choices[0].finish_reason);
-        match &message.choices[0].content {
+        assert_eq!(None, response.choices[0].finish_reason);
+        match &response.choices[0].content {
             ChoiceContent::Delta(Delta::Empty { delta }) => assert_eq!("assistant", delta["role"]),
             _ => panic!("Expected Empty Content"),
         }
@@ -195,8 +197,11 @@ mod tests {
 
     #[test]
     fn test_stream_end() {
-        let message: ChatMessage = serde_json::from_str(STREAM_END).unwrap();
+        let response: Response = serde_json::from_str(STREAM_END).unwrap();
 
-        assert_eq!(Some(String::from("stop")), message.choices[0].finish_reason);
+        assert_eq!(
+            Some(String::from("stop")),
+            response.choices[0].finish_reason
+        );
     }
 }
