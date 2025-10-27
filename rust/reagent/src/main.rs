@@ -1,30 +1,28 @@
 use anyhow::Result;
 use futures::stream::StreamExt;
-use tokio::io::AsyncBufReadExt;
 use tokio_util::bytes::Bytes;
 
 use colored::Colorize;
 
+use inquire::Text;
+
 mod llm;
 
-fn trim_to_object(s: &str) -> &str {
-    match s.find('{') {
-        Some(pos) => &s[pos..],
-        None => "",
+fn parse(bytes: Bytes) -> Result<Option<llm::Response>> {
+    let str = std::str::from_utf8(&bytes)?;
+    match str.find('{') {
+        Some(pos) => Ok(serde_json::from_str(&str[pos..])?),
+        None => Ok(None),
     }
 }
 
-async fn process_message(next: reqwest::Result<Bytes>) -> Result<()> {
-    let unwrap = next?; // Propagate the error with '?'
-    let json_str = trim_to_object(std::str::from_utf8(&unwrap)?); // Also propagate the UTF-8 error
-    let response: llm::Response = serde_json::from_str(json_str)?; // Propagate the deserialization error
-
+async fn process_response(response: llm::Response) -> Result<()> {
     for choice in response.choices {
         match choice {
             llm::Choice {
                 content: llm::ChoiceContent::Delta(llm::Delta::Empty { delta: _ }),
                 ..
-            } => continue,
+            } => println!("\n"),
             llm::Choice {
                 content: llm::ChoiceContent::Delta(llm::Delta::Content { delta }),
                 ..
@@ -47,36 +45,41 @@ async fn process_message(next: reqwest::Result<Bytes>) -> Result<()> {
     Ok(())
 }
 
-#[tokio::main]
-async fn main() -> Result<(), reqwest::Error> {
-    let prompt = "Please enter your question:".magenta();
-    println!("{}", prompt);
-    let mut reader = tokio::io::BufReader::new(tokio::io::stdin());
-    let mut buffer = Vec::new();
-    let _ = reader.read_until(b'\n', &mut buffer).await;
-    let request = std::str::from_utf8(&buffer).unwrap_or("Why is the sky blue?");
-
+async fn respond(user_prompt: String) -> Result<()> {
     let response = reqwest::Client::new()
         .post("http://localhost:8080/v1/chat/completions")
         .json(&serde_json::json!({
-            "messages": [
-                {
-                    "role": "user",
-                    "content": request
-                }
-            ],
+            "messages": [ { "role": "user", "content": user_prompt }],
             "stream": true
         }))
         .send()
         .await?;
 
-    let mut byte_stream = response.bytes_stream();
+    let mut stream = response.bytes_stream();
 
-    while let Some(next) = byte_stream.next().await {
-        match process_message(next).await {
+    while let Some(response) = parse(stream.next().await.expect("content")?)? {
+        match process_response(response).await {
             Ok(_) => (),
             Err(e) => eprintln!("Error processing message: {:?}", e),
         }
+    }
+
+    Ok(())
+}
+
+#[tokio::main]
+async fn main() -> Result<(), anyhow::Error> {
+    loop {
+        let user_prompt = Text::new("Please enter your question")
+            .with_help_message("example: Why is the sky blue?")
+            .with_default("quit")
+            .prompt()?;
+
+        if user_prompt == "quit" {
+            break;
+        };
+
+        let _ = respond(user_prompt).await;
     }
 
     Ok(())
