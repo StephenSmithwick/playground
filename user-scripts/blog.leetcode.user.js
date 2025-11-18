@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         LeetCode Study Plan
 // @namespace    http://tampermonkey.net/
-// @version      0.4
+// @version      0.5
 // @description  Decorate Blog leetcode lists with Leetcode userdata
 // @author       stephensmithwick
 // @match        http://127.0.0.1:4000/leetcode/*
@@ -39,6 +39,7 @@
             const status = problem.status === "ac" ? "✅" : "⬛";
             const level = problem.difficulty?.level;
             const difficulty = ["NA", "🟢", "🟡", "🔴"][level ? level : 0];
+            const locked = problem.paid_only ? "🔒" : " ";
             const total_acs = problem.stat?.total_acs;
             const total_submitted = problem.stat?.total_submitted;
             const success_rate =
@@ -47,7 +48,7 @@
                 : "";
 
             li.innerHTML = `
-                        <data class="status">${status} ${difficulty}</data>
+                        <data class="status">${status} ${difficulty} ${locked}</data>
                         <a href="${url}">${id}. ${title} </a>
                         <data class="stats">
                             tries: <data>${total_submitted}</data>
