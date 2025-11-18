@@ -58,7 +58,6 @@ brew "llama.cpp"
 
 cask_args appdir: "/Applications"
 cask "rectangle"
-cask "google-chrome"
 cask "balenaetcher"
 cask "caffeine"
 cask "kdiff3"
@@ -74,6 +73,11 @@ cask "pgadmin4"
 cask "bitwarden"
 cask "mater"
 cask "wireshark-app"
+
+# Browser
+cask "zen"
+cask "google-chrome"
+cask "chatgpt-atlas"
 
 # Documents and Editors
 cask "basictex"
