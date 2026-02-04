@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import {render, Text, Box, Newline} from 'ink';
-import TextInput from 'ink-text-input';
+import {render, Text, Box} from 'ink';
+import {TextInput} from '@inkjs/ui';
+import Cowboy from './cowboy.js';
 
 type Props = {
 	name?: string;
@@ -20,8 +21,8 @@ interface StreamChunk {
 }
 
 export default function App({name = 'Stranger'}: Props) {
-	const [reason, setReason] = useState('...');
-	const [content, setContent] = useState('...');
+	const [reason, setReason] = useState('');
+	const [content, setContent] = useState(`G'day ${name}`);
 	const [error, setError] = useState('');
 	const [query, setQuery] = useState('Why is the sky blue?');
 
@@ -42,29 +43,31 @@ export default function App({name = 'Stranger'}: Props) {
 			let contentBuf = '';
 
 			for await (const chunk of res.body) {
-				const text = decoder
+				const lines = decoder
 					.decode(chunk, {stream: true})
 					.replace(/^data:\s*/gm, '')
 					.replace(/\[DONE\]/g, '')
-					.trim();
+					.split('\n')
+					.filter(line => line.trim() !== '');
 
-				if (!text) continue;
-
-				let data: StreamChunk;
-				try {
-					data = JSON.parse(text);
-				} catch {
-					continue; // Skip malformed chunks
-				}
-
-				for (const choice of data.choices) {
-					if (choice.delta.reasoning_content) {
-						reasonBuf += choice.delta.reasoning_content;
-						setReason(reasonBuf);
+				for (const line of lines) {
+					let data: StreamChunk;
+					try {
+						data = JSON.parse(line);
+					} catch {
+						setError(`Unable to parse: ${line}`);
+						continue;
 					}
-					if (choice.delta.content) {
-						contentBuf += choice.delta.content;
-						setContent(contentBuf);
+
+					for (const choice of data.choices) {
+						if (choice.delta.reasoning_content) {
+							reasonBuf += choice.delta.reasoning_content;
+							setReason(reasonBuf);
+						}
+						if (choice.delta.content) {
+							contentBuf += choice.delta.content;
+							setContent(contentBuf);
+						}
 					}
 				}
 			}
@@ -81,50 +84,23 @@ export default function App({name = 'Stranger'}: Props) {
 	}
 
 	return (
-		<Box flexDirection="column" borderStyle="doubleSingle" borderColor="green">
+		<Box flexDirection="column" borderStyle="round" borderColor="green">
 			<Box>
-				<Text color="blackBright" backgroundColor="redBright">
-					{cowboy}
-				</Text>
-				<Text>
-					<Newline /> <Newline /> Howdy {name}
-				</Text>
-			</Box>
-			<Text color="blue">{reason}</Text>
-			<Text color="green">{content}</Text>
-			{error && <Text color="red">{error}</Text>}
-			<Box>
-				<Box marginRight={1}>
-					<Text color="whiteBright" bold={true}>
-						Enter your query:
-					</Text>
+				<Cowboy />
+				<Box flexDirection="column" marginLeft={1} flexGrow={1}>
+					<Text color="blue">{reason}</Text>
+					<Text color="green">{content}</Text>
+					{error && <Text color="red">{error}</Text>}
 				</Box>
-
-				<TextInput value={query} onChange={setQuery} onSubmit={submit} />
 			</Box>
+			<Text>
+				<Text color="whiteBright" bold={true}>
+					Enter your query:{' '}
+				</Text>
+				<TextInput placeholder={query} onChange={setQuery} onSubmit={submit} />
+			</Text>
 		</Box>
 	);
 }
-
-const cowboy = `
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⣀⢠⣶⣶⡄⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣾⣤⣾⠀⠀⠀⠀⠀⠀⠙⢻⣿⣿⡟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣶⣿⣿⣿⣿⣷⡀⠀⠀⠀⠀⠀⠀⣠⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⣤⠄⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⣴⣾⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣀⠀⢀⣴⣾⣿⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠏⠉⠻⣿⣿⡇⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣏⠀⠀⠀⣹⡛⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢲⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡯⣉⣉⡈⠥⠂⠀⠀⠀⢼⣿⣧⣹⣿⣿⣿⣿⣿⡇⢹⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⢸⡿⣼⣿⣿⣿⣿⣿⣿⣗⣾⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀⢸⣷⣿⣿⣿⣿⢿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠋⢻⣿⣿⣿⢸⣿⣿⣿⢻⢸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣴⣿⣿⣿⡟⣿⣿⣿⠟⠘⠀⠀⠈⠉⠉⢹⣿⣿⠃⢹⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⡇⢸⣿⣿⡿⢸⣸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⢿⣿⣿⣿⣿⣿⣿⣿⣿⠋⠀⠀⠀⠀⠀⠀⠀⠸⣿⣿⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣻⣿⡇⠘⣿⣿⢫⡸⣻⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠉⢸⣿⣿⣿⣿⣏⠁⠀⠀⡀⠀⠀⠀⠀⢀⣿⢧⠀⢸⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣻⣿⡇⠀⣿⡿⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣹⡿⣿⣿⠀⢀⣰⣧⣤⣠⣶⣀⣾⣙⣘⣶⣾⣇⣤⣲⣿⣾⣴⣶⣄⠀⡠⠀⣈⡆⣠⣄⣹⣿⣃⣀⣿⣡⣆⣦⣄⣔⠀⣀⢠⠀⠄⣴⣀⣰⣿⣾⣶⣦⡀
-⠀⠀⠀⣤⢀⣾⣿⣿⣾⣿⣷⣼⣶⣿⣿⣿⣷⣿⣿⣾⣿⣿⣿⣿⣿⣤⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣿⣿⣷⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣿⣿⣶⣴⣿⣿⣿⣿⣿⣿⣿⣿
-⣶⣾⣿⣿⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-`;
 
 render(<App />);

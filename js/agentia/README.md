@@ -21,4 +21,4 @@ Node commands:
 - `pnpm install` - Install node dependencies
 - `pnpm build` - Build package
 - `pnpm dev` - Dev watch
-- `pnpm howdy` - Build and execute
+- `pnpm gday` - Build and execute
