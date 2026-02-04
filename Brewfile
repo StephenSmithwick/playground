@@ -40,6 +40,8 @@ brew "rbenv-gemset"
 brew "python"
 brew "ipython"
 brew "just"
+brew "llvm"
+
 
 # Ops Tools
 brew "awscli"
@@ -73,6 +75,7 @@ cask "pgadmin4"
 cask "bitwarden"
 cask "mater"
 cask "wireshark-app"
+cask "mac-mouse-fix"
 
 # Browser
 cask "zen"
