@@ -43,7 +43,7 @@ fn setup(
     assets: Res<AssetServer>,
     mut atlas: ResMut<Assets<TextureAtlasLayout>>,
 ) {
-    let text = std::fs::read_to_string("assets/maps/test_map.ron").unwrap();
+    let text = std::fs::read_to_string("assets/maps/csprings_map.ron").unwrap();
     let map: MapData = ron::from_str(&text).unwrap();
     let tilemap = assets.load("images/tilemap.png");
 
