@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
-import {render, Text, Box} from 'ink';
+import React, {useState, useEffect} from 'react';
+import {render, Text, Box, Spacer} from 'ink';
 import {TextInput} from '@inkjs/ui';
-import Cowboy from './cowboy.js';
+import process from 'node:process';
+import Cowboy, {minCowboyWidth} from './cowboy.js';
 
 type Props = {
 	name?: string;
@@ -20,11 +21,26 @@ interface StreamChunk {
 	}[];
 }
 
+const minContentWidth = 40;
+
 export default function App({name = 'Stranger'}: Props) {
 	const [reason, setReason] = useState('');
 	const [content, setContent] = useState(`G'day ${name}`);
 	const [error, setError] = useState('');
 	const [query, setQuery] = useState('Why is the sky blue?');
+	const [width, setWidth] = useState(process.stdout.columns);
+	const [maxContent, setMaxContent] = useState(false);
+
+	useEffect(() => {
+		function onResize() {
+			setWidth(process.stdout.columns);
+		}
+
+		process.stdout.on('resize', onResize);
+		return () => {
+			process.stdout.off('resize', onResize);
+		};
+	}, []);
 
 	async function talkToModel(query: string) {
 		try {
@@ -43,6 +59,7 @@ export default function App({name = 'Stranger'}: Props) {
 			let contentBuf = '';
 
 			for await (const chunk of res.body) {
+				setMaxContent(true);
 				const lines = decoder
 					.decode(chunk, {stream: true})
 					.replace(/^data:\s*/gm, '')
@@ -83,10 +100,16 @@ export default function App({name = 'Stranger'}: Props) {
 		talkToModel(query);
 	}
 
+	let cowboy = <Spacer />;
+	if (minContentWidth + minCowboyWidth < width) {
+		let cowboyWidth = maxContent ? minCowboyWidth : width - minContentWidth;
+		cowboy = <Cowboy width={cowboyWidth} />;
+	}
+
 	return (
 		<Box flexDirection="column" borderStyle="round" borderColor="green">
 			<Box>
-				<Cowboy />
+				{cowboy}
 				<Box flexDirection="column" marginLeft={1} flexGrow={1}>
 					<Text color="blue">{reason}</Text>
 					<Text color="green">{content}</Text>

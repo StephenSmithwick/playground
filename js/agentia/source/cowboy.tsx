@@ -1,5 +1,9 @@
-import React, {useRef, useLayoutEffect, useState, useEffect} from 'react';
-import {Box, Text, measureElement, useStdout} from 'ink';
+import React, {useRef} from 'react';
+import {Box, Text} from 'ink';
+
+type Props = {
+	width: number;
+};
 
 const GRADIENT_COWBOY = [
 	'#352682:⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
@@ -21,39 +25,24 @@ const GRADIENT_COWBOY = [
 	'#cf2440:⠀⠀⠀▄▗▟██▟██▟▆██████▟█████▄███████████████▙███████████████▆██▆▗████████',
 ].map(l => l.split(':')) as [string, string][];
 
-const COWBOY_WIDTH = 12;
-const COWBOY_END = 56;
+export const minCowboyWidth = 12;
+const cowboyEnd = 56;
 
 function sliceCowboy(start: number, end: number): [string, string][] {
 	return GRADIENT_COWBOY.map(([bg, line]) => [bg, line.slice(start, end)]);
 }
 
-export default function Cowboy() {
+export default function Cowboy({width}: Props) {
 	const boxRef = useRef(null);
-	const [width, setWidth] = useState(0);
-	const {stdout} = useStdout();
-
-	function onResize() {
-		if (boxRef.current) {
-			const {width: measuredWidth} = measureElement(boxRef.current);
-			if (measuredWidth !== width) setWidth(measuredWidth);
-		}
-	}
-
-	useLayoutEffect(onResize);
-	useEffect(() => {
-		stdout.on('resize', onResize);
-		return () => stdout.off('resize', onResize);
-	}, [stdout]);
 
 	const picture =
-		width > COWBOY_END
+		width > cowboyEnd
 			? sliceCowboy(0, width)
-			: sliceCowboy(COWBOY_END - width, COWBOY_END);
+			: sliceCowboy(cowboyEnd - width, cowboyEnd);
 
 	return (
 		<Box
-			minWidth={COWBOY_WIDTH}
+			minWidth={minCowboyWidth}
 			flexGrow={1}
 			ref={boxRef}
 			flexDirection="column"
