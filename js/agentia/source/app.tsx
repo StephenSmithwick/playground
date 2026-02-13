@@ -2,8 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {render, Text, Box, Spacer} from 'ink';
 import {TextInput} from '@inkjs/ui';
 import process from 'node:process';
-import Cowboy, {minCowboyWidth} from './cowboy.js';
-import Model from './model.js';
+import Cowboy, {minCowboyWidth} from './cowboy';
+import AgentProxy from './agents/index.js';
 
 type Props = {
 	name?: string;
@@ -15,12 +15,13 @@ export default function App({name = 'Stranger'}: Props) {
 	const [reason, setReason] = useState('');
 	const [content, setContent] = useState(`G'day ${name}`);
 	const [error, setError] = useState('');
-	const [query, setQuery] = useState('Why is the sky blue?');
+	const [query, setQuery] = useState(
+		'Please return the results of this python script: `import random; print(random.randint(1, 6))`',
+	);
 	const [width, setWidth] = useState(process.stdout.columns);
 	const [maxContent, setMaxContent] = useState(false);
 
-	const model = Model({
-		url: 'http://localhost:8080/v1/chat/completions',
+	const agent = AgentProxy('http://localhost:8080/v1/chat/completions', {
 		onResponseStart: () => setMaxContent(true),
 		onReasonPart: setReason,
 		onContentPart: setContent,
@@ -42,7 +43,12 @@ export default function App({name = 'Stranger'}: Props) {
 		setReason('...');
 		setContent('...');
 		setError('');
-		model.talk(query);
+		agent.send([
+			{
+				role: 'user',
+				content: query,
+			},
+		]);
 	}
 
 	let cowboy = <Spacer />;

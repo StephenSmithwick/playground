@@ -1,2 +1,5 @@
 node_modules
 dist
+/request.json
+/response.json
+/tools.json

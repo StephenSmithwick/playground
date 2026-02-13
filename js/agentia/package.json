@@ -5,11 +5,10 @@
 	"bin": "dist/cli.js",
 	"type": "module",
 	"engines": {
-		"node": ">=16"
+		"node": ">=23.6.0"
 	},
 	"scripts": {
-		"gday": "tsc && node dist/app.js",
-		"build": "tsc",
+		"gday": "tsx source/app.tsx",
 		"dev": "tsc --watch",
 		"test": "prettier --check . && xo && ava"
 	},
@@ -20,7 +19,8 @@
 		"@inkjs/ui": "^2.0.0",
 		"ink": "npm:@jrichman/ink@6.4.8",
 		"meow": "^14.0.0",
-		"react": "^19.2.4"
+		"react": "^19.2.4",
+		"tsx": "^4.21.0"
 	},
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "^3.0.1",
