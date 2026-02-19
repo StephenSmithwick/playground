@@ -18,6 +18,9 @@ brew "docker"
 # brew "podman"
 # brew "k3d"
 
+# Networking
+brew "socat"
+
 # Linux tools
 brew "grep"
 brew "zstd"
@@ -41,6 +44,7 @@ brew "python"
 brew "ipython"
 brew "just"
 brew "llvm"
+brew "pipx"
 
 
 # Ops Tools
