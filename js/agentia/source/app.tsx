@@ -4,6 +4,7 @@ import {TextInput} from '@inkjs/ui';
 import process from 'node:process';
 import Cowboy, {minCowboyWidth} from './cowboy';
 import AgentProxy from './agents/index.js';
+import {LocalModels} from './models.js';
 
 type Props = {
 	name?: string;
@@ -21,7 +22,7 @@ export default function App({name = 'Stranger'}: Props) {
 	const [width, setWidth] = useState(process.stdout.columns);
 	const [maxContent, setMaxContent] = useState(false);
 
-	const agent = AgentProxy('http://localhost:8080/v1/chat/completions', {
+	const agent = AgentProxy({
 		onResponseStart: () => setMaxContent(true),
 		onReasonPart: setReason,
 		onContentPart: setContent,

@@ -1,18 +1,13 @@
 import {Agent, handleResponse, AgentEvents, Message} from './index.js';
-import {log_to_file} from '../logs.js';
+import {smallLLM} from '../models.js';
 
-export default function PlanningAgent(url: string, events: AgentEvents): Agent {
+export default function PlanningAgent(events: AgentEvents): Agent {
 	async function send(messages: Message[]) {
 		try {
-			const res = await fetch(url, {
-				method: 'POST',
-				body: log_to_file(
-					'request.json',
-					JSON.stringify({
-						messages: messages,
-						stream: true,
-					}),
-				),
+			await smallLLM.load();
+			const res = await smallLLM.chat({
+				messages: messages,
+				stream: true,
 			});
 
 			handleResponse(res, events);

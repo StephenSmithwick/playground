@@ -89,11 +89,11 @@ function handleMessage(message: Message, events: AgentEvents) {
 	message.tool_calls && events.onToolCall?.(message);
 }
 
-export default function AgentProxy(url: string, events: AgentEvents): Agent {
+export default function AgentProxy(events: AgentEvents): Agent {
 	let history: Message[] = [];
 	let didRespond = false;
-	const planning = PlanningAgent(url, events);
-	const python = PythonAgent(url, {
+	const planning = PlanningAgent(events);
+	const python = PythonAgent({
 		...events,
 		onToolResponse: function (messages: Message[]) {
 			history = messages;

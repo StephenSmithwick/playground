@@ -2,22 +2,18 @@ import {Agent, handleResponse, AgentEvents, Message} from './index.js';
 import {log_to_file} from '../logs.js';
 import {toolJson} from '../functions/index.js';
 import Python from '../functions/python.js';
+import {mediumLLM} from '../models.js';
 
 const python = Python();
 const pythonDescription = toolJson(python);
 
-export default function PythonAgent(url: string, events: AgentEvents): Agent {
+export default function PythonAgent(events: AgentEvents): Agent {
 	async function send(messages: Message[]) {
 		try {
-			const res = await fetch(url, {
-				method: 'POST',
-				body: log_to_file(
-					'request.json',
-					JSON.stringify({
-						messages: messages,
-						tools: [pythonDescription],
-					}),
-				),
+			await mediumLLM.load();
+			const res = await mediumLLM.chat({
+				messages: messages,
+				tools: [pythonDescription],
 			});
 
 			handleResponse(res, {

@@ -14,7 +14,7 @@ brew install llama.cpp
 ### Llama.cpp hosted models
 Start the local llm:
 ```bash
-llama-server -hf unsloth/Qwen3-0.6B-GGUF --jinja
+llama-server --models-preset ./models.ini
 ```
 Note, initially this will download and cache the model (size: `378M`).
 
