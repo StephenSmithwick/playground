@@ -1,6 +1,7 @@
 {
 	"extends": "@sindresorhus/tsconfig",
 	"compilerOptions": {
+		"lib": ["ESNext"],
 		"outDir": "dist"
 	},
 	"include": ["source"]

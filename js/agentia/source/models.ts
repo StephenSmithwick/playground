@@ -35,7 +35,7 @@ async function serverIsDown() {
 
 interface FetchModel {
 	id: string;
-	status: {
+	status?: {
 		args: string[];
 	};
 }
@@ -49,19 +49,36 @@ async function fetchModels(): Promise<{data: FetchModel[]}> {
 		return Promise.reject('Unable to load local server models');
 	}
 }
-
-while (await serverIsDown()) {
-	spawn('llama-server', ['--models-preset', './models.ini']);
+async function sleep(ms: number): Promise<void> {
+	new Promise(resolve => setTimeout(resolve, ms));
 }
 
+const watchdog = setTimeout(() => {
+	throw new Error('Unable to startup llama-server');
+}, 5000);
+if (await serverIsDown()) {
+	console.log('Starting llama-server');
+	spawn('llama-server', ['--models-preset', './models.ini']);
+	while (await serverIsDown()) {
+		await sleep(99);
+	}
+}
+clearTimeout(watchdog);
+
 const allModels = (await fetchModels())['data'];
+log_to_file('models.json', allModels);
 
 async function LocalLLM(model: string): Promise<Model> {
 	const modelData = allModels.find(({id}) => id === model);
 	if (!modelData) return Promise.reject(`No matching model found: ${model}`);
-	const ctxId =
-		modelData.status.args.findIndex(arg => arg === '--ctx-size') + 1;
-	const context = Number(modelData.status.args[ctxId]);
+	if (!modelData.status)
+		return Promise.reject(
+			`llama-server ${model}: status missing (Have you started llama-server per the README.md?)`,
+		);
+	const ctxId = modelData.status.args.findIndex(
+		(arg: string) => arg === '--ctx-size',
+	);
+	const context = Number(modelData.status.args[ctxId + 1]);
 
 	function chat(body: any): Promise<Response> {
 		const message = JSON.stringify({...body, model});
