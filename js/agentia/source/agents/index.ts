@@ -1,5 +1,3 @@
-import PlanningAgent from './planning-agent.js';
-import PythonAgent from './python-agent.js';
 import {log_to_file} from '../logs.js';
 
 interface ToolCall {
@@ -89,46 +87,4 @@ function handleMessage(message: Message, events: AgentEvents) {
 	message.reasoning_content && events.onReasonPart?.(message.reasoning_content);
 	message.content && events.onContentPart?.(message.content);
 	message.tool_calls && events.onToolCall?.(message);
-}
-
-export default function AgentProxy(events: AgentEvents): Agent {
-	let history: Message[] = [];
-	let didRespond = false;
-	const planning = PlanningAgent(events);
-	const python = PythonAgent({
-		...events,
-		onToolResponse: function (messages: Message[]) {
-			history = messages;
-			python.send(messages);
-		},
-		onContentPart: function (content) {
-			didRespond = true;
-			events.onContentPart?.(content);
-		},
-		onResponseEnd: function (finish_reason) {
-			if (finish_reason !== 'tool_calls' && !didRespond) {
-				python.send([
-					...history,
-					{
-						role: 'developer',
-						content:
-							'You are very knowledgeable. An expert. Think and respond with confidence. ',
-					},
-				]);
-			}
-		},
-	});
-
-	async function send(messages: Message[]) {
-		// temporarily hardcode talking to the PythonAgent
-		if (true) {
-			didRespond = false;
-			python.send(messages);
-		} else {
-			planning.send(messages);
-		}
-	}
-	return {
-		send,
-	};
 }

@@ -3,8 +3,7 @@ import {render, Text, Box, Spacer} from 'ink';
 import {TextInput} from '@inkjs/ui';
 import process from 'node:process';
 import Cowboy, {minCowboyWidth} from './cowboy';
-import AgentProxy from './agents/index.js';
-import {LocalModels} from './models.js';
+import ProxyAgent from './agents/proxy-agent.js';
 
 type Props = {
 	name?: string;
@@ -22,7 +21,7 @@ export default function App({name = 'Stranger'}: Props) {
 	const [width, setWidth] = useState(process.stdout.columns);
 	const [maxContent, setMaxContent] = useState(false);
 
-	const agent = AgentProxy({
+	const agent = ProxyAgent({
 		onResponseStart: () => setMaxContent(true),
 		onReasonPart: setReason,
 		onContentPart: setContent,
