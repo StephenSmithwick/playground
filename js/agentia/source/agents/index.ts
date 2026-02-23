@@ -12,8 +12,10 @@ interface ToolCall {
 
 export interface Message {
 	role?: string;
+	name?: string;
 	reasoning_content?: string;
 	content?: string;
+	tool_call_id?: string;
 	tool_calls?: ToolCall[];
 }
 
