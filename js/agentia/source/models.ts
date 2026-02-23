@@ -49,9 +49,6 @@ async function fetchModels(): Promise<{data: FetchModel[]}> {
 		return Promise.reject('Unable to load local server models');
 	}
 }
-async function sleep(ms: number): Promise<void> {
-	new Promise(resolve => setTimeout(resolve, ms));
-}
 
 const watchdog = setTimeout(() => {
 	throw new Error('Unable to startup llama-server');
@@ -59,9 +56,7 @@ const watchdog = setTimeout(() => {
 if (await serverIsDown()) {
 	console.log('Starting llama-server');
 	spawn('llama-server', ['--models-preset', './models.ini']);
-	while (await serverIsDown()) {
-		await sleep(99);
-	}
+	while (await serverIsDown()) {}
 }
 clearTimeout(watchdog);
 
