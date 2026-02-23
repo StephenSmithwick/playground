@@ -1,7 +1,7 @@
 import {Agent, handleResponse, AgentEvents, Message} from './index.js';
 import {log_to_file} from '../logs.js';
-import {toolJson} from '../functions/index.js';
-import Python from '../functions/python.js';
+import {toolJson} from '../tools/index.js';
+import Python from '../tools/python.js';
 import {mediumLLM} from '../models.js';
 
 const python = Python();
