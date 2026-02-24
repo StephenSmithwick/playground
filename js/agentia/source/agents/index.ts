@@ -59,7 +59,9 @@ export async function handleResponse(res: Response, events: AgentEvents) {
 		events.onResponseStart?.();
 		for (const line of lines(chunks)) {
 			try {
-				handleResponsePart(JSON.parse(log_to_file('response.json', line)), {
+				const response = JSON.parse(line);
+				log_to_file('chat.json', {response});
+				handleResponsePart(response, {
 					...events,
 					onContentPart: (val: string) => {
 						events.onContentPart?.((contentBuf += val));
@@ -73,6 +75,30 @@ export async function handleResponse(res: Response, events: AgentEvents) {
 			}
 		}
 	}
+}
+
+export interface ToolHandler {
+	call: (id: string, args: any) => Promise<Message>;
+}
+
+export async function handleToolCalls(
+	toolCalls: ToolCall[],
+	toolHandlers: Map<string, ToolHandler>,
+): Promise<Message[]> {
+	return Promise.all(
+		toolCalls.map(async toolCall => {
+			log_to_file('tools.json', {toolCall});
+			const args = JSON.parse(toolCall.function.arguments);
+			const toolHandler = toolHandlers.get(toolCall.function.name);
+			if (!toolHandler) {
+				return Promise.reject(`Unable to handle ${JSON.stringify(toolCall)}`);
+			}
+
+			const toolResponse = await toolHandler.call(toolCall.id, args);
+			log_to_file('tools.json', {toolResponse});
+			return toolResponse;
+		}),
+	);
 }
 
 function handleResponsePart(data: ResponsePart, events: AgentEvents) {

@@ -17,6 +17,10 @@ export interface Model {
 	unload: () => Promise<Response>;
 }
 
+export interface ServerHealth {
+	status: string;
+}
+
 async function serverIsDown() {
 	try {
 		const health = await fetch(HEALTH_URL);
@@ -25,8 +29,7 @@ async function serverIsDown() {
 			return true;
 		}
 
-		const healthData = await health.json();
-
+		const healthData = (await health.json()) as ServerHealth;
 		return healthData.status !== 'ok';
 	} catch (error) {
 		return true;
@@ -40,14 +43,10 @@ interface FetchModel {
 	};
 }
 
-async function fetchModels(): Promise<{data: FetchModel[]}> {
-	try {
-		const res = await fetch(MODEL_URL);
-		return await res.json();
-	} catch (error) {
-		log_to_file('errors.json', error);
-		return Promise.reject('Unable to load local server models');
-	}
+async function fetchModels(): Promise<FetchModel[]> {
+	const res = await fetch(MODEL_URL);
+	const responseData = (await res.json()) as {data: FetchModel[]};
+	return responseData.data;
 }
 
 const watchdog = setTimeout(() => {
@@ -60,8 +59,7 @@ if (await serverIsDown()) {
 }
 clearTimeout(watchdog);
 
-const allModels = (await fetchModels())['data'];
-log_to_file('models.json', allModels);
+const allModels = await fetchModels();
 
 async function LocalLLM(model: string): Promise<Model> {
 	const modelData = allModels.find(({id}) => id === model);
@@ -76,21 +74,17 @@ async function LocalLLM(model: string): Promise<Model> {
 	const context = Number(modelData.status.args[ctxId + 1]);
 
 	function chat(body: any): Promise<Response> {
-		const message = JSON.stringify({...body, model});
-		log_to_file('request.json', message);
-		return fetch(CHAT_URL, {method: 'POST', body: message});
+		const request = {...body, model};
+		log_to_file('chat.json', {request});
+		return fetch(CHAT_URL, {method: 'POST', body: JSON.stringify(request)});
 	}
 
 	function load(): Promise<Response> {
-		const message = JSON.stringify({model});
-		log_to_file('load.json', {load: message});
-		return fetch(LOAD_URL, {method: 'POST', body: message});
+		return fetch(LOAD_URL, {method: 'POST', body: JSON.stringify({model})});
 	}
 
 	function unload(): Promise<Response> {
-		const message = JSON.stringify({model});
-		log_to_file('load.json', {load: message});
-		return fetch(UNLOAD_URL, {method: 'POST', body: message});
+		return fetch(UNLOAD_URL, {method: 'POST', body: JSON.stringify({model})});
 	}
 
 	return {id: model, context, chat, load, unload};

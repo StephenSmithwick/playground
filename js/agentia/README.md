@@ -12,11 +12,15 @@ brew install llama.cpp
 ## Setup
 
 ### Llama.cpp hosted models
-Start the local llm:
+Currently you must cache all the models locally
+```bash
+llama-server -hf unsloth/Qwen3-0.6B-GGUF -hf unsloth/Qwen3-1.7B-GGUF -hf unsloth/Qwen3-14B-GGUF --jinja
+```
+
+Optionally you can start the local llm for Agentia otherwise it will spawn llama-server in the background:
 ```bash
 llama-server --models-preset ./models.ini
 ```
-Note, initially this will download and cache the model (size: `378M`).
 
 ### Docker instance
 I prefer to use colima:
@@ -34,7 +38,10 @@ Node commands:
 
 
 ## Debugging
-Currently we log `request.json`, `response.json`, and `tools.json`
+Currently we log to json files in the logs directory.
+- `errors.json`: Every unhandled errors will be logged before a process summary: `{ "process_end": <pid>, "timestamp": <timestamp>}`
+- `chat.json`: Every `request` to the llm and the `response`
+- `tools.json`: Every `toolCall` and corresponding `toolResponse`
 
 To play and view a request you may use this curl request:
 ```

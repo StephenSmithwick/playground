@@ -13,9 +13,8 @@ const Python = (): Tool => ({
 		},
 	],
 	requiredParameters: ['script'],
-	call: function ({script}: any): ExecPromise {
+	call: async function ({script}: any): ExecPromise {
 		if (typeof script !== 'string') return Promise.reject('No script provided');
-
 		const docker = execPromise(`docker run -i --rm ${image} python -`);
 		docker.child.stdin?.write(script);
 		docker.child.stdin?.end();
