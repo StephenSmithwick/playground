@@ -8,15 +8,17 @@
 		"node": ">=23.6.0"
 	},
 	"scripts": {
-		"gday": "tsx source/app.tsx",
-		"dev": "tsc --watch",
-		"test": "prettier --check . && xo && ava"
+		"start": "bun run ./source/cli.tsx",
+		"dev": "bun run --watch ./source/cli.tsx",
+		"compile": "bun build ./source/cli.tsx --compile --outfile agentia",
+		"test": "bun test"
 	},
 	"files": [
 		"dist"
 	],
 	"dependencies": {
 		"@inkjs/ui": "^2.0.0",
+		"bun": "^1.3.9",
 		"ink": "npm:@jrichman/ink@6.4.8",
 		"meow": "^14.0.0",
 		"react": "^19.2.4",
@@ -35,6 +37,7 @@
 		"eslint-plugin-react-hooks": "^4.6.2",
 		"ink-testing-library": "^3.0.0",
 		"prettier": "^2.8.8",
+		"react-devtools-core": "^7.0.1",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.9.3",
 		"xo": "^0.53.1"

@@ -31,10 +31,10 @@ colima start
 ## Commands
 Node commands:
 
-- `pnpm install` - Install node dependencies
-- `pnpm build` - Build package
-- `pnpm dev` - Dev watch
-- `pnpm gday` - Build and execute
+- `bun install` - Install node dependencies
+- `bun compile` - Compile agentia
+- `bun dev` - Dev watch
+- `bun test` - Not currently setup
 
 
 ## Debugging

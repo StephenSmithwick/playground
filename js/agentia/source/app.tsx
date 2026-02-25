@@ -99,5 +99,3 @@ export default function App({name = 'Stranger'}: Props) {
 		</Box>
 	);
 }
-
-render(<App />);
