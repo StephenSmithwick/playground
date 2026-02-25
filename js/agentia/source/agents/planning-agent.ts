@@ -1,7 +1,10 @@
-import {Agent, handleResponse, AgentEvents, Message} from './index.js';
+import {Agent, handleResponse, Message} from './index.js';
 import {smallLLM} from '../models.js';
+import {AgentEventListeners, AgentEventEmitter} from './agent-events.js';
 
-export default function PlanningAgent(events: AgentEvents): Agent {
+export default function PlanningAgent(listeners: AgentEventListeners): Agent {
+	const events = new AgentEventEmitter();
+	events.all(listeners);
 	async function send(messages: Message[]) {
 		try {
 			await smallLLM.load();
@@ -11,8 +14,8 @@ export default function PlanningAgent(events: AgentEvents): Agent {
 			});
 
 			handleResponse(res, events);
-		} catch (err: unknown) {
-			events.onError?.(`Request failed: ${(err as Error).message}`);
+		} catch (err) {
+			events.emit('error', `Request failed: ${(err as Error).message}`);
 		}
 	}
 	return {

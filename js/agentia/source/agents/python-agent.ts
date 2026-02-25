@@ -2,13 +2,13 @@ import {
 	Agent,
 	handleResponse,
 	handleToolCalls,
-	AgentEvents,
 	Message,
 	ToolHandler,
 } from './index.js';
 import {toolJson} from '../tools/index.js';
 import Python from '../tools/python.js';
 import {mediumLLM} from '../models.js';
+import {AgentEventEmitter, AgentEventListeners} from './agent-events.js';
 
 const python = Python();
 const pythonDescription = toolJson(python);
@@ -25,8 +25,14 @@ const toolHandlers = new Map<string, ToolHandler>([
 	[python.name, {call: callPython}],
 ]);
 
-export default function PythonAgent(events: AgentEvents): Agent {
-	async function send(messages: Message[]) {
+export default function PythonAgent(listeners: AgentEventListeners): Agent {
+	let messages: Message[] = [];
+	let events = new AgentEventEmitter();
+
+	events.all(listeners);
+
+	async function send(messagesToSend: Message[]) {
+		messages = messagesToSend;
 		try {
 			await mediumLLM.load();
 			const res = await mediumLLM.chat({
@@ -34,27 +40,21 @@ export default function PythonAgent(events: AgentEvents): Agent {
 				tools: [pythonDescription],
 			});
 
-			handleResponse(res, {
-				...events,
-				onToolCall: async function (message: Message) {
-					if (message.tool_calls) {
-						events.onToolCall?.(message);
-						const toolResponses = handleToolCalls(
-							message.tool_calls,
-							toolHandlers,
-						);
-						events.onToolResponse?.([
-							...messages,
-							message,
-							...(await toolResponses),
-						]);
-					}
-				},
-			});
+			handleResponse(res, events);
 		} catch (err: unknown) {
-			events.onError?.(`Request failed: ${(err as Error).message}`);
+			events.emit('error', `Request failed: ${(err as Error).message}`);
 		}
 	}
+
+	// I'm worried this might result in a neverending circular event loop:
+	// [send] -> [event.emit('toolCall')] -> [send] -> [...]
+	events.on('toolCall', async function (message: Message) {
+		if (message.tool_calls) {
+			const toolResponses = handleToolCalls(message.tool_calls, toolHandlers);
+			send([...messages, message, ...(await toolResponses)]);
+		}
+	});
+
 	return {
 		send,
 	};

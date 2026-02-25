@@ -1,4 +1,5 @@
 import {log_to_file} from '../logs.js';
+import {AgentEventEmitter} from './agent-events.js';
 
 interface ToolCall {
 	function: {
@@ -29,16 +30,6 @@ export interface Agent {
 	send: (messages: Message[]) => Promise<void>;
 }
 
-export interface AgentEvents {
-	onResponseStart?: () => void;
-	onResponseEnd?: (finish_reason: string) => void;
-	onReasonPart?: (reason: string) => void;
-	onContentPart?: (content: string) => void;
-	onToolCall?: (message: Message) => Promise<void>;
-	onToolResponse?: (messages: Message[]) => void;
-	onError?: (error: string) => void;
-}
-
 const decoder = new TextDecoder();
 function lines(chunk: Uint8Array<ArrayBuffer>): string[] {
 	return decoder
@@ -49,29 +40,20 @@ function lines(chunk: Uint8Array<ArrayBuffer>): string[] {
 		.filter(line => line.trim() !== '');
 }
 
-export async function handleResponse(res: Response, events: AgentEvents) {
+export async function handleResponse(res: Response, events: AgentEventEmitter) {
 	if (!res.body) throw new Error('Response body missing.');
 
-	let reasonBuf = '';
-	let contentBuf = '';
+	let buf = {reason: '', content: ''};
 
 	for await (const chunks of res.body) {
-		events.onResponseStart?.();
+		events.emit('responseStart');
 		for (const line of lines(chunks)) {
 			try {
 				const response = JSON.parse(line);
 				log_to_file('chat.json', {response});
-				handleResponsePart(response, {
-					...events,
-					onContentPart: (val: string) => {
-						events.onContentPart?.((contentBuf += val));
-					},
-					onReasonPart: (val: string) => {
-						events.onReasonPart?.((reasonBuf += val));
-					},
-				});
+				handleResponsePart(response, events, buf);
 			} catch {
-				events.onError?.(`Unable to parse: ${line}`);
+				events.emit('error', `Unable to parse: ${line}`);
 			}
 		}
 	}
@@ -101,16 +83,39 @@ export async function handleToolCalls(
 	);
 }
 
-function handleResponsePart(data: ResponsePart, events: AgentEvents) {
+interface Buffer {
+	reason: string;
+	content: string;
+}
+
+function handleResponsePart(
+	data: ResponsePart,
+	events: AgentEventEmitter,
+	buf: Buffer,
+) {
 	for (const choice of data.choices) {
 		choice.message && handleMessage(choice.message, events);
-		choice.delta && handleMessage(choice.delta, events);
-		choice.finish_reason && events.onResponseEnd?.(choice.finish_reason);
+		choice.delta && handleDelta(choice.delta, events, buf);
+		choice.finish_reason && events.emit('responseEnd', choice.finish_reason);
 	}
 }
 
-function handleMessage(message: Message, events: AgentEvents) {
-	message.reasoning_content && events.onReasonPart?.(message.reasoning_content);
-	message.content && events.onContentPart?.(message.content);
-	message.tool_calls && events.onToolCall?.(message);
+// TODO: consider moving buffer logic to top level
+function handleDelta(msg: Message, events: AgentEventEmitter, buf: Buffer) {
+	if (msg.reasoning_content) {
+		buf.reason += msg.reasoning_content;
+		events.emit('reasonPart', buf.reason);
+	}
+	if (msg.content) {
+		buf.content += msg.content;
+		events.emit('contentPart', buf.content);
+	}
+	// Beware: In my tests Delta tool calls are problematic - llm does not wait for a response
+	msg.tool_calls && events.emit('toolCall', msg);
+}
+
+function handleMessage(msg: Message, events: AgentEventEmitter) {
+	msg.reasoning_content && events.emit('reasonPart', msg.reasoning_content);
+	msg.content && events.emit('contentPart', msg.content);
+	msg.tool_calls && events.emit('toolCall', msg);
 }

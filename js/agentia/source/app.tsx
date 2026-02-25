@@ -2,8 +2,9 @@ import React, {useState, useEffect} from 'react';
 import {render, Text, Box, Spacer} from 'ink';
 import {TextInput} from '@inkjs/ui';
 import process from 'node:process';
-import Cowboy, {minCowboyWidth} from './cowboy';
+import Cowboy, {minCowboyWidth} from './cowboy.js';
 import ProxyAgent from './agents/proxy-agent.js';
+import {AgentEventListeners} from './agents/agent-events.js';
 
 type Props = {
 	name?: string;
@@ -21,12 +22,13 @@ export default function App({name = 'Stranger'}: Props) {
 	const [width, setWidth] = useState(process.stdout.columns);
 	const [maxContent, setMaxContent] = useState(false);
 
-	const agent = ProxyAgent({
-		onResponseStart: () => setMaxContent(true),
-		onReasonPart: setReason,
-		onContentPart: setContent,
-		onError: setError,
-	});
+	const listeners: AgentEventListeners = [
+		['responseStart', () => setMaxContent(true)],
+		['reasonPart', setReason],
+		['contentPart', setContent],
+		['error', setError],
+	];
+	const agent = ProxyAgent(listeners);
 
 	useEffect(() => {
 		function onResize() {
