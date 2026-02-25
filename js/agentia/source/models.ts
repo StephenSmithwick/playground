@@ -1,6 +1,7 @@
 import {spawn} from 'child_process';
 import {log_to_file} from './logs.js';
 
+const SERVER_TIMEOUT = 5000;
 const LOCAL = 'http://localhost:8080';
 const CHAT_URL = `${LOCAL}/v1/chat/completions`;
 const HEALTH_URL = `${LOCAL}/v1/health`;
@@ -51,11 +52,13 @@ async function fetchModels(): Promise<FetchModel[]> {
 
 const watchdog = setTimeout(() => {
 	throw new Error('Unable to startup llama-server');
-}, 5000);
+}, SERVER_TIMEOUT);
 if (await serverIsDown()) {
 	console.log('Starting llama-server');
 	spawn('llama-server', ['--models-preset', './models.ini']);
-	while (await serverIsDown()) {}
+	do {
+		await new Promise(r => setTimeout(r, SERVER_TIMEOUT / 10 - 1));
+	} while (await serverIsDown());
 }
 clearTimeout(watchdog);
 
