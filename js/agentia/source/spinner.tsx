@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {Text} from 'ink';
 
-const waves = '▁▂▃▄▅▆▆▇▇▇████▇▇▇▆▆▅▄▃▂▁  ▁▂▃▄▅▆▆▇▇▇██';
-const window = 8;
+const waves = '-⎽__⎽-⎻⎺⎺⎻-⎽__⎽-';
+const window = 7;
 const max = waves.length - window;
 
 export function Spinner() {
@@ -11,7 +11,7 @@ export function Spinner() {
 	useEffect(() => {
 		const timer = setInterval(() => {
 			setStart(prev => (prev - 1 + max) % max);
-		}, 70);
+		}, 200);
 
 		return () => clearInterval(timer);
 	}, []);
