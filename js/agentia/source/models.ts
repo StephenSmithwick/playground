@@ -50,22 +50,25 @@ async function fetchModels(): Promise<FetchModel[]> {
 	return responseData.data;
 }
 
-const watchdog = setTimeout(() => {
-	throw new Error('Unable to startup llama-server');
-}, SERVER_TIMEOUT);
-if (await serverIsDown()) {
-	console.log('Starting llama-server');
-	spawn('llama-server', ['--models-preset', './models.ini']);
-	do {
-		await new Promise(r => setTimeout(r, SERVER_TIMEOUT / 10 - 1));
-	} while (await serverIsDown());
+async function startLLMServer() {
+	const watchdog = setTimeout(() => {
+		throw new Error('Unable to startup llama-server');
+	}, SERVER_TIMEOUT);
+	if (await serverIsDown()) {
+		console.log('Starting llama-server');
+		spawn('llama-server', ['--models-preset', './models.ini']);
+		do {
+			await new Promise(r => setTimeout(r, SERVER_TIMEOUT / 10 - 1));
+		} while (await serverIsDown());
+	}
+	clearTimeout(watchdog);
 }
-clearTimeout(watchdog);
 
-const allModels = await fetchModels();
-
-async function LocalLLM(model: string): Promise<Model> {
-	const modelData = allModels.find(({id}) => id === model);
+async function LocalLLM(
+	model: string,
+	modelInformation: FetchModel[],
+): Promise<Model> {
+	const modelData = modelInformation.find(({id}) => id === model);
 	if (!modelData) return Promise.reject(`No matching model found: ${model}`);
 	if (!modelData.status)
 		return Promise.reject(
@@ -93,6 +96,16 @@ async function LocalLLM(model: string): Promise<Model> {
 	return {id: model, context, chat, load, unload};
 }
 
-export const smallLLM = await LocalLLM('unsloth/Qwen3-0.6B-GGUF');
-export const mediumLLM = await LocalLLM('unsloth/Qwen3-1.7B-GGUF');
-export const largeLLM = await LocalLLM('unsloth/Qwen3-14B-GGUF');
+const modelMap = {
+	smallLLM: 'unsloth/Qwen3-0.6B-GGUF',
+	mediumLLM: 'unsloth/Qwen3-1.7B-GGUF',
+	largeLLM: 'unsloth/Qwen3-14B-GGUF',
+} as const;
+export type ModelKey = keyof typeof modelMap;
+export async function loadLocalModel(model: ModelKey): Promise<Model> {
+	await startLLMServer();
+
+	const modelInformation = await fetchModels();
+
+	return await LocalLLM(modelMap[model], modelInformation);
+}

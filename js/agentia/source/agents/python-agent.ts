@@ -7,7 +7,7 @@ import {
 } from './index.js';
 import {toolJson} from '../tools/index.js';
 import Python from '../tools/python.js';
-import {mediumLLM} from '../models.js';
+import {loadLocalModel} from '../models.js';
 import {AgentEventEmitter, AgentEventListeners} from './agent-events.js';
 
 const python = Python();
@@ -25,7 +25,10 @@ const toolHandlers = new Map<string, ToolHandler>([
 	[python.name, {call: callPython}],
 ]);
 
-export default function PythonAgent(listeners: AgentEventListeners): Agent {
+export default async function PythonAgent(
+	listeners: AgentEventListeners,
+): Promise<Agent> {
+	const mediumLLM = await loadLocalModel('mediumLLM');
 	let messages: Message[] = [];
 	let events = new AgentEventEmitter();
 

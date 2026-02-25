@@ -9,7 +9,9 @@ const KICK_MESSAGE: Message = {
 		'You are very knowledgeable. An expert. Think and respond with confidence. ',
 };
 
-export default function ProxyAgent(appListeners: AgentEventListeners): Agent {
+export default async function ProxyAgent(
+	appListeners: AgentEventListeners,
+): Promise<Agent> {
 	let didRespond = false;
 	let messages: Message[] = [];
 
@@ -24,8 +26,8 @@ export default function ProxyAgent(appListeners: AgentEventListeners): Agent {
 		['contentPart', () => (didRespond = true)],
 		['responseEnd', convinceLlmToRespond],
 	];
-	const planning = PlanningAgent(listeners);
-	const python = PythonAgent(listeners);
+	const planning = await PlanningAgent(listeners);
+	const python = await PythonAgent(listeners);
 
 	async function send(messagesToSend: Message[]) {
 		messages = messagesToSend;

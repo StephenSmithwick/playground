@@ -4,7 +4,9 @@ import {TextInput} from '@inkjs/ui';
 import process from 'node:process';
 import Cowboy, {minCowboyWidth} from './cowboy.js';
 import ProxyAgent from './agents/proxy-agent.js';
+import {Agent} from './agents/index.js';
 import {AgentEventListeners} from './agents/agent-events.js';
+import {Spinner} from './spinner.js';
 
 type Props = {
 	name?: string;
@@ -13,8 +15,11 @@ type Props = {
 const minContentWidth = 40;
 
 export default function App({name = 'Stranger'}: Props) {
-	const [reason, setReason] = useState('');
-	const [content, setContent] = useState(`G'day ${name}`);
+	const [agent, setAgent] = useState<Agent | null>(null);
+	const [loading, setLoading] = useState(true);
+
+	const [reason, setReason] = useState<string | null>('');
+	const [content, setContent] = useState<string | null>(`G'day ${name}`);
 	const [error, setError] = useState('');
 	const [query, setQuery] = useState(
 		'Please return the results of this python script: `import random; print(random.randint(1, 6))`',
@@ -28,24 +33,35 @@ export default function App({name = 'Stranger'}: Props) {
 		['contentPart', setContent],
 		['error', setError],
 	];
-	const agent = ProxyAgent(listeners);
 
 	useEffect(() => {
 		function onResize() {
 			setWidth(process.stdout.columns);
 		}
-
 		process.stdout.on('resize', onResize);
 		return () => {
 			process.stdout.off('resize', onResize);
 		};
 	}, []);
 
+	useEffect(() => {
+		async function loadModel() {
+			try {
+				setAgent(await ProxyAgent(listeners));
+				setLoading(false);
+			} catch (error) {
+				if (error instanceof Error)
+					setError(`Error loading model: ${error.message}`);
+			}
+		}
+		loadModel();
+	}, []);
+
 	function submit() {
-		setReason('...');
-		setContent('...');
+		setReason(null);
+		setContent(null);
 		setError('');
-		agent.send([
+		agent?.send([
 			{
 				role: 'user',
 				content: query,
@@ -64,16 +80,21 @@ export default function App({name = 'Stranger'}: Props) {
 			<Box>
 				{cowboy}
 				<Box flexDirection="column" marginLeft={1} flexGrow={1}>
-					<Text color="blue">{reason}</Text>
-					<Text color="green">{content}</Text>
+					<Text color="blue">{reason ?? <Spinner />}</Text>
+					<Text color="green">{content ?? <Spinner />}</Text>
 					{error && <Text color="red">{error}</Text>}
 				</Box>
 			</Box>
 			<Text>
 				<Text color="whiteBright" bold={true}>
-					Enter your query:{' '}
+					{loading ? <Spinner /> : 'Enter your query: '}
 				</Text>
-				<TextInput placeholder={query} onChange={setQuery} onSubmit={submit} />
+				<TextInput
+					isDisabled={loading}
+					placeholder={loading ? 'Model Loading' : query}
+					onChange={setQuery}
+					onSubmit={submit}
+				/>
 			</Text>
 		</Box>
 	);

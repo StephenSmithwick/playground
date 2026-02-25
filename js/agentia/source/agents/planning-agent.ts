@@ -1,8 +1,11 @@
 import {Agent, handleResponse, Message} from './index.js';
-import {smallLLM} from '../models.js';
+import {loadLocalModel} from '../models.js';
 import {AgentEventListeners, AgentEventEmitter} from './agent-events.js';
 
-export default function PlanningAgent(listeners: AgentEventListeners): Agent {
+export default async function PlanningAgent(
+	listeners: AgentEventListeners,
+): Promise<Agent> {
+	const smallLLM = await loadLocalModel('smallLLM');
 	const events = new AgentEventEmitter();
 	events.all(listeners);
 	async function send(messages: Message[]) {
