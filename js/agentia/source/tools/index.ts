@@ -20,6 +20,7 @@ export interface Parameter {
 	name: string;
 	type: string;
 	description: string;
+	enum?: string[];
 }
 
 export interface ToolDescription {
@@ -50,9 +51,9 @@ export function toolJson(tool: Tool): ToolDescription {
 				type: 'object',
 				required: tool.requiredParameters,
 				properties: Object.fromEntries(
-					tool.parameters.map(({name, type, description}) => [
+					tool.parameters.map(({name, type, description, enum: options}) => [
 						name,
-						{type, description},
+						{type, description, enum: options},
 					]),
 				),
 			},
