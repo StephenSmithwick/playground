@@ -2,6 +2,7 @@ import PlanningAgent from './planning-agent.js';
 import PythonAgent from './python-agent.js';
 import {Message, Agent} from './index.js';
 import {AgentEventListeners} from './agent-events.js';
+import VisionAgent from './vision-agent.js';
 
 const KICK_MESSAGE: Message = {
 	role: 'developer',
@@ -28,17 +29,23 @@ export default async function ProxyAgent(
 	];
 	const planning = await PlanningAgent(listeners);
 	const python = await PythonAgent(listeners);
+	const vision = await VisionAgent(listeners);
 
+	function chooseAgent(): Agent {
+		if (true) {
+			return vision;
+		} else {
+			return false ? python : planning;
+		}
+	}
 	async function send(messagesToSend: Message[]) {
 		messages = messagesToSend;
 		// temporarily hardcode talking to the PythonAgent
-		if (true) {
-			python.send(messages);
-		} else {
-			planning.send(messages);
-		}
+		chooseAgent().send(messages);
 	}
-	return {
-		send,
-	};
+
+	function suggest(): string {
+		return chooseAgent().suggest();
+	}
+	return {send, suggest};
 }

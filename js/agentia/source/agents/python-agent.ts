@@ -58,7 +58,9 @@ export default async function PythonAgent(
 		}
 	});
 
-	return {
-		send,
-	};
+	function suggest() {
+		return 'Please return the results of this python script: `import random; print(random.randint(1, 6))`';
+	}
+
+	return {send, suggest};
 }

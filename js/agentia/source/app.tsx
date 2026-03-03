@@ -21,16 +21,20 @@ export default function App({name = 'Stranger'}: Props) {
 	const [reason, setReason] = useState<string | null>('');
 	const [content, setContent] = useState<string | null>(`G'day ${name}`);
 	const [error, setError] = useState('');
-	const [query, setQuery] = useState(
-		'Please return the results of this python script: `import random; print(random.randint(1, 6))`',
-	);
+	const [query, setQuery] = useState('');
 	const [width, setWidth] = useState(process.stdout.columns);
 	const [maxContent, setMaxContent] = useState(false);
 
 	const listeners: AgentEventListeners = [
 		['responseStart', () => setMaxContent(true)],
 		['reasonPart', setReason],
-		['contentPart', setContent],
+		[
+			'contentPart',
+			(content: string) => {
+				if (!reason) setReason('');
+				setContent(content);
+			},
+		],
 		['error', setError],
 	];
 
@@ -47,11 +51,12 @@ export default function App({name = 'Stranger'}: Props) {
 	useEffect(() => {
 		async function loadModel() {
 			try {
-				setAgent(await ProxyAgent(listeners));
+				const proxyAgent = await ProxyAgent(listeners);
+				setAgent(proxyAgent);
+				setQuery(proxyAgent.suggest);
 				setLoading(false);
 			} catch (error) {
-				if (error instanceof Error)
-					setError(`Error loading model: ${error.message}`);
+				if (error instanceof Error) setError(error.message);
 			}
 		}
 		loadModel();

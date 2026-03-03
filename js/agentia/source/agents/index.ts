@@ -10,12 +10,21 @@ interface ToolCall {
 }
 
 export interface Message {
-	role?: string;
+	role?: 'user' | 'developer' | 'assistant' | 'tool';
 	name?: string;
 	reasoning_content?: string;
-	content?: string;
+	content?: string | Content[];
 	tool_call_id?: string;
 	tool_calls?: ToolCall[];
+}
+
+interface Content {
+	type: 'text' | 'image_url';
+	text?: string;
+	image_url?: {
+		url: string;
+		detail: 'auto' | 'low' | 'high';
+	};
 }
 
 interface ResponsePart {
@@ -28,6 +37,7 @@ interface ResponsePart {
 
 export interface Agent {
 	send: (messages: Message[]) => Promise<void>;
+	suggest: () => string;
 }
 
 const decoder = new TextDecoder();
