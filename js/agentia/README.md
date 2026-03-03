@@ -12,15 +12,10 @@ brew install llama.cpp
 ## Setup
 
 ### Llama.cpp hosted models
-Currently you must cache all the models locally
-```bash
-llama-server -hf unsloth/Qwen3-0.6B-GGUF -hf unsloth/Qwen3-1.7B-GGUF -hf unsloth/Qwen3-14B-GGUF --jinja
-```
+Agentia uses a llama.cpp server in router mode and depends on the server to have a number of models in cache (Found here in OSX: `~/Library/Caches/llama.cpp/`).
+You can use `bun download` to download all of the models
 
-Optionally you can start the local llm for Agentia otherwise it will spawn llama-server in the background:
-```bash
-llama-server --models-preset ./models.ini
-```
+Agentia will start the llama server for you in the background if not running with: `llama-server --models-preset ./models.ini`
 
 ### Docker instance
 I prefer to use colima:
