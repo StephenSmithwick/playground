@@ -1,4 +1,4 @@
-import {spawn} from 'child_process';
+import {spawn, ChildProcess} from 'child_process';
 import {log_to_file} from './logs.js';
 
 const SERVER_TIMEOUT = 5000;
@@ -11,7 +11,6 @@ const UNLOAD_URL = `${LOCAL}/v1/models/unload`;
 
 export interface Model {
 	id: string;
-	context: number;
 
 	chat: (body: any) => Promise<Response>;
 	load: () => Promise<Response>;
@@ -50,17 +49,33 @@ async function fetchModels(): Promise<FetchModel[]> {
 	return responseData.data;
 }
 
+let serverProcess: ChildProcess | null = null;
 async function startLLMServer() {
+	if (serverProcess) return;
+
 	const watchdog = setTimeout(() => {
 		throw new Error('Unable to startup llama-server');
 	}, SERVER_TIMEOUT);
+
 	if (await serverIsDown()) {
-		console.log('Starting llama-server');
-		spawn('llama-server', ['--models-preset', './models.ini']);
+		serverProcess = spawn('llama-server', ['--models-preset', './models.ini'], {
+			cwd: process.cwd(),
+			env: process.env,
+		});
 		do {
 			await new Promise(r => setTimeout(r, SERVER_TIMEOUT / 10 - 1));
 		} while (await serverIsDown());
 	}
+
+	function cleanup() {
+		if (!serverProcess) return;
+		serverProcess.kill('SIGINT');
+		serverProcess = null;
+	}
+
+	process.on('SIGINT', cleanup);
+	process.on('SIGTERM', cleanup);
+	process.on('exit', cleanup);
 	clearTimeout(watchdog);
 }
 
@@ -69,15 +84,7 @@ async function LocalLLM(
 	modelInformation: FetchModel[],
 ): Promise<Model> {
 	const modelData = modelInformation.find(({id}) => id === model);
-	if (!modelData) return Promise.reject(`No matching model found: ${model}`);
-	if (!modelData.status)
-		return Promise.reject(
-			`llama-server ${model}: status missing (Have you started llama-server per the README.md?)`,
-		);
-	const ctxId = modelData.status.args.findIndex(
-		(arg: string) => arg === '--ctx-size',
-	);
-	const context = Number(modelData.status.args[ctxId + 1]);
+	if (!modelData) throw new Error(`Model not found in cache: ${model}`);
 
 	function chat(body: any): Promise<Response> {
 		const request = {...body, model};
@@ -93,13 +100,14 @@ async function LocalLLM(
 		return fetch(UNLOAD_URL, {method: 'POST', body: JSON.stringify({model})});
 	}
 
-	return {id: model, context, chat, load, unload};
+	return {id: model, chat, load, unload};
 }
 
-const modelMap = {
+export const modelMap = {
 	smallLLM: 'unsloth/Qwen3-0.6B-GGUF',
 	mediumLLM: 'unsloth/Qwen3-1.7B-GGUF',
 	largeLLM: 'unsloth/Qwen3-14B-GGUF',
+	visionLLM: 'stduhpf/google-gemma-3-4b-it-qat-q4_0-gguf-small',
 } as const;
 export type ModelKey = keyof typeof modelMap;
 export async function loadLocalModel(model: ModelKey): Promise<Model> {
