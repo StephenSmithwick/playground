@@ -27,15 +27,6 @@ export default async function VisionAgent(
 		}
 	}
 
-	// I'm worried this might result in a neverending circular event loop:
-	// [send] -> [event.emit('toolCall')] -> [send] -> [...]
-	events.on('toolCall', async function (message: Message) {
-		if (message.tool_calls) {
-			const toolResponses = handleToolCalls(message.tool_calls, toolHandlers);
-			send([...messages, message, ...(await toolResponses)]);
-		}
-	});
-
 	function suggest() {
 		return '{{fish.png}} Please describe the image.';
 	}

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {render, Text, Box, Spacer} from 'ink';
+import {Text, Box, Spacer} from 'ink';
 import {TextInput} from '@inkjs/ui';
 import process from 'node:process';
 import Cowboy, {minCowboyWidth} from './cowboy.js';
@@ -53,7 +53,7 @@ export default function App({name = 'Stranger'}: Props) {
 			try {
 				const proxyAgent = await ProxyAgent(listeners);
 				setAgent(proxyAgent);
-				setQuery(proxyAgent.suggest);
+				setQuery(proxyAgent.suggest());
 				setLoading(false);
 			} catch (error) {
 				if (error instanceof Error) setError(error.message);

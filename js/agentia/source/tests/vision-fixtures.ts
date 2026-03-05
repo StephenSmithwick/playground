@@ -11,7 +11,7 @@ export async function image64(image: TestImage) {
 	return fs.readFileSync(imagePath, {encoding: 'base64'});
 }
 
-const imageRegex = /^{{(?<image>[^.]\.)(?<ext>[^}]+)}}(?<textContent>.*)/;
+const imageRegex = /^{{(?<file>[^.]+)\.(?<ext>[^}]+)}}(?<textContent>.*)/;
 export async function transformTestMessages(
 	message: Message,
 ): Promise<Message> {
@@ -19,19 +19,22 @@ export async function transformTestMessages(
 	const content = message.content as string;
 	const match = imageRegex.exec(content);
 	if (!match || !match.groups) return message;
-	const {image, ext, textContent} = match.groups as {
-		image: string;
+	const {file, ext, textContent} = match.groups as {
+		file: string;
 		ext: string;
 		textContent: string;
 	};
+	const image = `${file}.${ext}`;
 
+	if (!TEST_IMAGES.includes(image))
+		throw new Error('Please use an image from: ' + JSON.stringify(TEST_IMAGES));
 	return {
 		...message,
 		content: [
 			{
 				type: 'image_url',
 				image_url: {
-					url: `data:image/${ext};base64,${await image64(image + ext)}`,
+					url: `data:image/${ext};base64,${await image64(image)}`,
 					detail: 'auto',
 				},
 			},
