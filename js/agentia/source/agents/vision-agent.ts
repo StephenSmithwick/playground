@@ -1,4 +1,4 @@
-import {Agent, handleResponse, handleToolCalls, Message} from './index.js';
+import {Agent, handleResponse, Message} from './index.js';
 import {loadLocalModel} from '../models.js';
 import {AgentEventEmitter, AgentEventListeners} from './agent-events.js';
 import {transformTestMessages} from '../tests/vision-fixtures.js';

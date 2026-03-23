@@ -5,7 +5,7 @@ const waves = '-⎽__⎽-⎻⎺⎺⎻-⎽__⎽-';
 const window = 7;
 const max = waves.length - window;
 
-export function Spinner() {
+export function Loader() {
 	const [start, setStart] = useState(Math.floor(waves.length * Math.random()));
 
 	useEffect(() => {

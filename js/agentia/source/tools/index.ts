@@ -13,7 +13,7 @@ export interface Tool {
 	description: string;
 	parameters: [Parameter];
 	requiredParameters: [string];
-	call: (obj: any) => ExecPromise;
+	call: (obj: any) => Promise<ExecPromise>;
 }
 
 export interface Parameter {

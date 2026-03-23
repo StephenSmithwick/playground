@@ -1,4 +1,4 @@
-import {Tool, execPromise, ExecPromise} from './index';
+import {Tool, execPromise, ExecPromise} from './index.js';
 
 const image = 'python:3-alpine';
 
@@ -13,12 +13,12 @@ const Python = (): Tool => ({
 		},
 	],
 	requiredParameters: ['script'],
-	call: async function ({script}: any): ExecPromise {
+	call: async function ({script}: any): Promise<ExecPromise> {
 		if (typeof script !== 'string') return Promise.reject('No script provided');
 		const docker = execPromise(`docker run -i --rm ${image} python -`);
 		docker.child.stdin?.write(script);
 		docker.child.stdin?.end();
-		return docker;
+		return await docker;
 	},
 });
 

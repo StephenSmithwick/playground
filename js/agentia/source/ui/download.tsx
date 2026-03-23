@@ -4,8 +4,8 @@ import React, {useState, useEffect} from 'react';
 import {EventEmitter} from 'node:events';
 import {render, Text, Box} from 'ink';
 import {exec, execSync} from 'node:child_process';
-import {modelMap} from './models.js';
-import {Spinner} from './spinner.js';
+import {modelMap} from '../models.js';
+import {Loader} from './loader.js';
 import {promisify} from 'node:util';
 
 const execPromise = promisify(exec);
@@ -27,7 +27,7 @@ function toModel([name, id]: [string, string]): Model {
 function renderStatus(status: Model['status']): React.JSX.Element {
 	if (status === 'present') return <Text color={'greenBright'}>✔</Text>;
 	if (status === 'missing') return <Text color={'redBright'}>✘</Text>;
-	return <Spinner />;
+	return <Loader />;
 }
 
 function ModelDownloader(props: Model) {

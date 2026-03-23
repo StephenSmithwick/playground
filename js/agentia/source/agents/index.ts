@@ -98,6 +98,16 @@ interface Buffer {
 	content: string;
 }
 
+function messageContentToText(content: Message['content']): string {
+	if (typeof content === 'string') return content;
+	if (!content) return '';
+
+	return content
+		.filter(part => part.type === 'text' && typeof part.text === 'string')
+		.map(part => part.text)
+		.join('\n');
+}
+
 function handleResponsePart(
 	data: ResponsePart,
 	events: AgentEventEmitter,
@@ -126,6 +136,6 @@ function handleDelta(msg: Message, events: AgentEventEmitter, buf: Buffer) {
 
 function handleMessage(msg: Message, events: AgentEventEmitter) {
 	msg.reasoning_content && events.emit('reasonPart', msg.reasoning_content);
-	msg.content && events.emit('contentPart', msg.content);
+	msg.content && events.emit('contentPart', messageContentToText(msg.content));
 	msg.tool_calls && events.emit('toolCall', msg);
 }

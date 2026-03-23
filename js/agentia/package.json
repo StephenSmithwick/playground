@@ -9,9 +9,9 @@
 	},
 	"scripts": {
 		"start": "bun run ./source/cli.tsx",
-		"download": "bun run ./source/download.tsx",
-		"dev": "bun run --watch ./source/cli.tsx",
-		"compile": "bun build ./source/cli.tsx --compile --outfile agentia",
+		"download": "bun run ./source/ui/download.tsx",
+		"dev": "bun run --watch ./source/ui/cli.tsx",
+		"compile": "bun build ./source/ui/cli.tsx --compile --outfile agentia",
 		"test": "bun test"
 	},
 	"files": [

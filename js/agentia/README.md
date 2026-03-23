@@ -17,6 +17,20 @@ You can use `bun download` to download all of the models
 
 Agentia will start the llama server for you in the background if not running with: `llama-server --models-preset ./models.ini`
 
+### WyrmStore context over socket mode
+
+If WyrmStore is running in socket mode, Agentia will route each turn through it before calling the LLM. By default Agentia will auto-detect `/tmp/memoryd.sock`.
+
+You can also configure it explicitly:
+
+```bash
+AGENTIA_WYRMSTORE_SOCKET_PATH=/tmp/memoryd.sock \
+AGENTIA_WYRMSTORE_TOPIC_ID=agentia \
+bun run ./source/cli.tsx
+```
+
+Agentia sends the running conversation to WyrmStore, uses the returned `messages` array for the LLM request, and keeps the assistant reply in local history for the next turn.
+
 ### Docker instance
 I prefer to use colima:
 ```bash

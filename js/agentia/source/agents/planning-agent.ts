@@ -23,5 +23,6 @@ export default async function PlanningAgent(
 	}
 	return {
 		send,
+		suggest: () => 'What should I work on next?',
 	};
 }

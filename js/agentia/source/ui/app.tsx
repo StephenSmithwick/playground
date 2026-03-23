@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import {Text, Box, Spacer} from 'ink';
-import {TextInput} from '@inkjs/ui';
 import process from 'node:process';
 import Cowboy, {minCowboyWidth} from './cowboy.js';
-import ProxyAgent from './agents/proxy-agent.js';
-import {Agent} from './agents/index.js';
-import {AgentEventListeners} from './agents/agent-events.js';
-import {Spinner} from './spinner.js';
+import ProxyAgent from '../agents/proxy-agent.js';
+import {Agent} from '../agents/index.js';
+import {AgentEventListeners} from '../agents/agent-events.js';
+import {ChatHistory, ChatItem} from './chat-history.js';
+import {ChatInput} from './chat-input.js';
 
 type Props = {
 	name?: string;
@@ -18,6 +18,7 @@ export default function App({name = 'Stranger'}: Props) {
 	const [agent, setAgent] = useState<Agent | null>(null);
 	const [loading, setLoading] = useState(true);
 
+	const [history, setHistory] = useState<ChatItem[]>([]);
 	const [reason, setReason] = useState<string | null>('');
 	const [content, setContent] = useState<string | null>(`G'day ${name}`);
 	const [error, setError] = useState('');
@@ -35,6 +36,7 @@ export default function App({name = 'Stranger'}: Props) {
 				setContent(content);
 			},
 		],
+		['responseEnd', () => setHistory([{query, reason, content}, ...history])],
 		['error', setError],
 	];
 
@@ -85,20 +87,20 @@ export default function App({name = 'Stranger'}: Props) {
 			<Box>
 				{cowboy}
 				<Box flexDirection="column" marginLeft={1} flexGrow={1}>
-					<Text color="blue">{reason ?? <Spinner />}</Text>
-					<Text color="green">{content ?? <Spinner />}</Text>
-					{error && <Text color="red">{error}</Text>}
+					<ChatHistory
+						reason={reason}
+						content={content}
+						error={error}
+						history={history}
+					/>
 				</Box>
 			</Box>
 			<Text>
-				<Text color="whiteBright" bold={true}>
-					{loading ? <Spinner /> : 'Enter your query: '}
-				</Text>
-				<TextInput
-					isDisabled={loading}
-					placeholder={loading ? 'Model Loading' : query}
+				<ChatInput
+					loading={loading}
 					onChange={setQuery}
 					onSubmit={submit}
+					query={query}
 				/>
 			</Text>
 		</Box>
