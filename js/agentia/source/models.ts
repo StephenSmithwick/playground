@@ -107,7 +107,7 @@ export const modelMap = {
 	smallLLM: 'unsloth/Qwen3-0.6B-GGUF',
 	mediumLLM: 'unsloth/Qwen3-1.7B-GGUF',
 	largeLLM: 'unsloth/Qwen3-14B-GGUF',
-	visionLLM: 'stduhpf/google-gemma-3-4b-it-qat-q4_0-gguf-small',
+	visionLLM: 'stduhpf/google-gemma-3-4b',
 } as const;
 export type ModelKey = keyof typeof modelMap;
 export async function loadLocalModel(model: ModelKey): Promise<Model> {
