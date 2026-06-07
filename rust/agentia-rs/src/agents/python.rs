@@ -31,7 +31,9 @@ impl PythonAgent {
         });
 
         let res = self.model.chat(req).await?;
-        handle_response(res, ui).await
+        let (mut outcome, message) = handle_response(res, ui).await?;
+        outcome.request_messages = self.messages.clone();
+        Ok((outcome, message))
     }
 
     async fn execute_tool_calls(&self, message: &Message) -> Result<Vec<Message>> {

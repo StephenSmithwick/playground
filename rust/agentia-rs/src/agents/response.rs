@@ -25,66 +25,67 @@ struct Buffers {
     content: String,
 }
 
+#[derive(Default)]
+struct ResponseState {
+    buffers: Buffers,
+    finish_reason: Option<String>,
+    message: Option<Message>,
+    did_respond: bool,
+}
+
 pub async fn handle_response(
     res: Response,
     ui: &mut UiState,
 ) -> Result<(SendOutcome, Option<Message>)> {
     let mut stream = res.bytes_stream();
-    let mut buffers = Buffers::default();
-    let mut last_finish_reason: Option<String> = None;
-    let mut response_message: Option<Message> = None;
-    let mut did_respond = false;
+    let mut state = ResponseState::default();
 
     while let Some(chunk) = stream.next().await {
         let chunk = chunk?;
         let text = String::from_utf8_lossy(&chunk);
 
         for raw_line in text.lines() {
-            let line = raw_line.trim().trim_start_matches("data:").trim();
-            if line.is_empty() || line == "[DONE]" {
-                continue;
-            }
-
-            let Ok(part) = serde_json::from_str::<ResponsePart>(line) else {
-                ui.error(&format!("Unable to parse response line: {line}"));
+            let Some(line) = response_line(raw_line) else {
                 continue;
             };
 
-            log_json_line("chat.json", &serde_json::json!({ "response": part }));
-
-            for choice in part.choices {
-                if let Some(msg) = choice.message {
-                    apply_message(&msg, ui, &mut buffers, &mut did_respond);
-                    response_message = Some(merge_message(response_message, msg));
-                }
-                if let Some(delta) = choice.delta {
-                    apply_delta(&delta, ui, &mut buffers, &mut did_respond);
-                    response_message = Some(merge_message(response_message, delta));
-                }
-                if choice.finish_reason.is_some() {
-                    last_finish_reason = choice.finish_reason;
-                }
-            }
+            handle_response_line(line, ui, &mut state);
         }
     }
 
-    if response_message.is_none() && (!buffers.content.is_empty() || !buffers.reason.is_empty()) {
-        response_message = Some(Message {
-            role: Some("assistant".to_string()),
-            reasoning_content: (!buffers.reason.is_empty()).then_some(buffers.reason.clone()),
-            content: (!buffers.content.is_empty())
-                .then_some(serde_json::Value::String(buffers.content.clone())),
-            ..Message::default()
-        });
-    }
+    Ok(state.into_result())
+}
 
-    Ok((
-        SendOutcome {
-            finish_reason: last_finish_reason,
-            did_respond,
-        },
-        response_message,
-    ))
+fn response_line(raw_line: &str) -> Option<&str> {
+    let line = raw_line.trim().trim_start_matches("data:").trim();
+    (!line.is_empty() && line != "[DONE]").then_some(line)
+}
+
+fn handle_response_line(line: &str, ui: &mut UiState, state: &mut ResponseState) {
+    let Ok(part) = serde_json::from_str::<ResponsePart>(line) else {
+        ui.error(&format!("Unable to parse response line: {line}"));
+        return;
+    };
+
+    log_json_line("chat.json", &serde_json::json!({ "response": part }));
+
+    for choice in part.choices {
+        apply_choice(choice, ui, state);
+    }
+}
+
+fn apply_choice(choice: Choice, ui: &mut UiState, state: &mut ResponseState) {
+    if let Some(msg) = choice.message {
+        apply_message(&msg, ui, &mut state.buffers, &mut state.did_respond);
+        state.message = Some(merge_message(state.message.take(), msg));
+    }
+    if let Some(delta) = choice.delta {
+        apply_delta(&delta, ui, &mut state.buffers, &mut state.did_respond);
+        state.message = Some(merge_message(state.message.take(), delta));
+    }
+    if choice.finish_reason.is_some() {
+        state.finish_reason = choice.finish_reason;
+    }
 }
 
 fn apply_delta(delta: &Message, ui: &mut UiState, buffers: &mut Buffers, did_respond: &mut bool) {
@@ -93,12 +94,12 @@ fn apply_delta(delta: &Message, ui: &mut UiState, buffers: &mut Buffers, did_res
         ui.reason_part(&buffers.reason);
     }
 
-    if let Some(content) = &delta.content {
-        if let Some(content_text) = content.as_str() {
-            buffers.content.push_str(content_text);
-            ui.content_part(&buffers.content);
-            *did_respond = true;
-        }
+    if let Some(content) = &delta.content
+        && let Some(content_text) = content.as_str()
+    {
+        buffers.content.push_str(content_text);
+        ui.content_part(&buffers.content);
+        *did_respond = true;
     }
 }
 
@@ -113,12 +114,12 @@ fn apply_message(
         ui.reason_part(&buffers.reason);
     }
 
-    if let Some(content) = &message.content {
-        if let Some(content_text) = content.as_str() {
-            buffers.content = content_text.to_string();
-            ui.content_part(&buffers.content);
-            *did_respond = true;
-        }
+    if let Some(content) = &message.content
+        && let Some(content_text) = content.as_str()
+    {
+        buffers.content = content_text.to_string();
+        ui.content_part(&buffers.content);
+        *did_respond = true;
     }
 }
 
@@ -151,4 +152,36 @@ fn merge_tool_calls(existing: Option<Vec<ToolCall>>, mut updates: Vec<ToolCall>)
     let mut calls = existing.unwrap_or_default();
     calls.append(&mut updates);
     calls
+}
+
+impl ResponseState {
+    fn into_result(mut self) -> (SendOutcome, Option<Message>) {
+        if self.message.is_none() && self.buffers.has_output() {
+            self.message = Some(self.buffers.into_message());
+        }
+
+        (
+            SendOutcome {
+                finish_reason: self.finish_reason,
+                did_respond: self.did_respond,
+                request_messages: Vec::new(),
+            },
+            self.message,
+        )
+    }
+}
+
+impl Buffers {
+    fn has_output(&self) -> bool {
+        !self.content.is_empty() || !self.reason.is_empty()
+    }
+
+    fn into_message(self) -> Message {
+        Message {
+            role: Some("assistant".to_string()),
+            reasoning_content: (!self.reason.is_empty()).then_some(self.reason),
+            content: (!self.content.is_empty()).then_some(serde_json::Value::String(self.content)),
+            ..Message::default()
+        }
+    }
 }

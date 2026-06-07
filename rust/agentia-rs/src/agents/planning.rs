@@ -23,11 +23,12 @@ impl Agent for PlanningAgent {
     async fn send(&mut self, messages: Vec<Message>, ui: &mut UiState) -> Result<SendOutcome> {
         self.model.load().await?;
         let req = json!({
-            "messages": messages,
+            "messages": &messages,
             "stream": true,
         });
         let res = self.model.chat(req).await?;
-        let (outcome, _) = handle_response(res, ui).await?;
+        let (mut outcome, _) = handle_response(res, ui).await?;
+        outcome.request_messages = messages;
         Ok(outcome)
     }
 

@@ -50,31 +50,41 @@ impl ProxyAgent {
             AgentState::Vision => &mut self.vision,
         }
     }
+
+    fn kick_messages(&self, outcome: &SendOutcome) -> Vec<Message> {
+        let mut messages = outcome.request_messages.clone();
+        messages.push(Message {
+            role: Some("developer".to_string()),
+            content: Some(Value::String(KICK_MESSAGE.to_string())),
+            ..Message::default()
+        });
+        messages
+    }
 }
 
 #[async_trait]
 impl Agent for ProxyAgent {
     async fn send(&mut self, messages: Vec<Message>, ui: &mut UiState) -> Result<SendOutcome> {
         self.messages = messages;
-        let messages_to_send = self.messages.clone();
+        let mut messages_to_send = self.messages.clone();
+        let mut did_kick = false;
 
-        let mut outcome = self.agent_mut().send(messages_to_send, ui).await?;
+        loop {
+            let outcome = self.agent_mut().send(messages_to_send, ui).await?;
+            if did_kick || !should_kick(&outcome) {
+                return Ok(outcome);
+            }
 
-        if outcome.finish_reason.as_deref() != Some("tool_calls") && !outcome.did_respond {
-            let mut retry_messages = self.messages.clone();
-            retry_messages.push(Message {
-                role: Some("developer".to_string()),
-                content: Some(Value::String(KICK_MESSAGE.to_string())),
-                ..Message::default()
-            });
-
-            outcome = self.agent_mut().send(retry_messages.clone(), ui).await?;
+            did_kick = true;
+            messages_to_send = self.kick_messages(&outcome);
         }
-
-        Ok(outcome)
     }
 
     fn suggest(&self) -> String {
         self.agent().suggest()
     }
+}
+
+fn should_kick(outcome: &SendOutcome) -> bool {
+    outcome.finish_reason.as_deref() != Some("tool_calls") && !outcome.did_respond
 }

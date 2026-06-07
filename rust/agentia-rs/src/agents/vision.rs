@@ -87,10 +87,11 @@ impl Agent for VisionAgent {
 
         self.model.load().await?;
         let req = json!({
-            "messages": transformed,
+            "messages": &transformed,
         });
         let res = self.model.chat(req).await?;
-        let (outcome, _) = handle_response(res, ui).await?;
+        let (mut outcome, _) = handle_response(res, ui).await?;
+        outcome.request_messages = transformed;
         Ok(outcome)
     }
 

@@ -11,8 +11,14 @@ pub struct ToolFunction {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct ToolCall {
+    #[serde(rename = "type", default = "default_tool_call_type")]
+    pub kind: String,
     pub function: ToolFunction,
     pub id: String,
+}
+
+fn default_tool_call_type() -> String {
+    "function".to_string()
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -45,6 +51,7 @@ impl Message {
 pub struct SendOutcome {
     pub finish_reason: Option<String>,
     pub did_respond: bool,
+    pub request_messages: Vec<Message>,
 }
 
 #[derive(Debug, Default)]
@@ -82,4 +89,32 @@ impl UiState {
 pub trait Agent {
     async fn send(&mut self, messages: Vec<Message>, ui: &mut UiState) -> Result<SendOutcome>;
     fn suggest(&self) -> String;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Message;
+
+    #[test]
+    fn preserves_tool_call_type_for_followup_requests() {
+        let message: Message = serde_json::from_value(serde_json::json!({
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [{
+                "type": "function",
+                "function": {
+                    "name": "Python",
+                    "arguments": "{\"script\":\"print(1)\"}"
+                },
+                "id": "call_1"
+            }]
+        }))
+        .unwrap();
+
+        let serialized = serde_json::to_value(message).unwrap();
+        assert_eq!(
+            serialized["tool_calls"][0]["type"],
+            serde_json::Value::String("function".to_string())
+        );
+    }
 }
