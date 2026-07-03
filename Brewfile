@@ -45,7 +45,7 @@ brew "ipython"
 brew "just"
 brew "llvm"
 brew "pipx"
-
+brew "odin"
 
 # Ops Tools
 brew "awscli"

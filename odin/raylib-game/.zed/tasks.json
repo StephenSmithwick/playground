@@ -1,0 +1,16 @@
+// Project tasks configuration. See https://zed.dev/docs/tasks for documentation.
+[
+  {
+    "label": "Run",
+    "command": "odin run .",
+    // "env": { "foo": "bar" },
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always", // `always` | `no_focus` | `never`
+    "reveal_target": "dock", // `dock` | `center`
+    "hide": "never", // `never` | `always` | `on_success`
+    "shell": "system",
+    "show_summary": true,
+    "show_command": true,
+  },
+]
