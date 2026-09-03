@@ -46,6 +46,7 @@ brew "just"
 brew "llvm"
 brew "pipx"
 brew "odin"
+brew "mise"
 
 # Ops Tools
 brew "awscli"
@@ -58,6 +59,7 @@ brew "postgresql"
 brew "whisper-cpp"
 brew "espeak-ng"
 brew "llama.cpp"
+cask "cursor"
 
 # tap "mostlygeek/llama-swap"
 # brew "llama-swap"
