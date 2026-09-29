@@ -1,3 +1,5 @@
+require_relative "unsafe_brew"
+
 brew "tree"
 brew "wget"
 brew "htop"
@@ -36,6 +38,7 @@ brew "go"
 
 # Dev Tools
 brew "npm"
+brew "pnpm"
 brew "yarn"
 brew "node"
 brew "rbenv"
@@ -48,6 +51,17 @@ brew "pipx"
 brew "odin"
 brew "mise"
 
+# Dev ML
+cask "chatgpt"
+cask "claude"
+cask "claude-code"
+cask "cursor"
+
+# ML
+brew "whisper-cpp"
+brew "espeak-ng"
+brew "llama.cpp"
+
 # Ops Tools
 brew "awscli"
 brew "minikube"
@@ -55,28 +69,17 @@ brew "minikube"
 # Databases
 brew "postgresql"
 
-# ML
-brew "whisper-cpp"
-brew "espeak-ng"
-brew "llama.cpp"
-cask "cursor"
-
-# tap "mostlygeek/llama-swap"
-# brew "llama-swap"
-
 cask_args appdir: "/Applications"
 cask "rectangle"
 cask "balenaetcher"
 cask "caffeine"
 cask "kdiff3"
 cask "sqlworkbenchj"
-cask "michaelvillar-timer"
+cask! "michaelvillar-timer"
 cask "slack"
 cask "marta"
 cask "boop"
 cask "shotcut"
-cask "alacritty"
-cask "chatgpt"
 cask "pgadmin4"
 cask "bitwarden"
 cask "mater"
@@ -86,12 +89,15 @@ cask "mac-mouse-fix"
 # Browser
 cask "zen"
 cask "google-chrome"
-cask "chatgpt-atlas"
 
 # Documents and Editors
 cask "basictex"
 cask "visual-studio-code"
 cask "zed"
 cask "krita"
+cask "inkscape"
 brew "pandoc"
 brew "gnuplot"
+
+# Gaming with caleb
+cask "luanti"
