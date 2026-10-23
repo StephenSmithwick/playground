@@ -17,8 +17,6 @@ brew "bitwarden-cli"
 # Containers
 brew "colima"
 brew "docker"
-# brew "podman"
-# brew "k3d"
 
 # Networking
 brew "socat"
@@ -98,6 +96,7 @@ cask "krita"
 cask "inkscape"
 brew "pandoc"
 brew "gnuplot"
+cask! "pikopixel"
 
 # Gaming with caleb
 cask "luanti"
