@@ -20,7 +20,6 @@ brew "docker"
 
 # Networking
 brew "socat"
-cask "wireshark"
 
 # Linux tools
 brew "grep"
