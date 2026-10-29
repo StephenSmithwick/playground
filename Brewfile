@@ -1,4 +1,4 @@
-require_relative "unsafe_brew"
+require_relative "unsafe_cask"
 
 brew "tree"
 brew "wget"
@@ -20,6 +20,7 @@ brew "docker"
 
 # Networking
 brew "socat"
+cask "wireshark"
 
 # Linux tools
 brew "grep"
@@ -73,7 +74,7 @@ cask "balenaetcher"
 cask "caffeine"
 cask "kdiff3"
 cask "sqlworkbenchj"
-cask! "michaelvillar-timer"
+cask! "michaelvillar-timer", sha256: "e7bcb1c4e8e7", strip_quarantine: true
 cask "slack"
 cask "marta"
 cask "boop"
@@ -96,7 +97,7 @@ cask "krita"
 cask "inkscape"
 brew "pandoc"
 brew "gnuplot"
-cask! "pikopixel"
+cask! "pikopixel", sha256: "3fa29b5a3899", strip_quarantine: true
 
 # Gaming with caleb
 cask "luanti"
